@@ -153,6 +153,47 @@ nav a:hover::after{right:0}
 @keyframes battre{0%,100%{opacity:.55;transform:translateX(-50%) scaleX(1)}
                   50%    {opacity:1;transform:translateX(-50%) scaleX(2.6)}}
 
+/* ── l'ouverture : la cassure se rejoue ──
+   Tout est porte par la classe .briser, posee sur la section au chargement
+   et retiree a la fin. Sans elle, la page est dans son etat normal : c'est
+   ce qui garantit qu'un echec du script ne casse rien. */
+
+/* les panneaux, colles et eteints */
+.ouverture.briser .pan{transform:translateX(var(--pousse,0));
+  transition:transform 1.15s cubic-bezier(.16,1,.3,1)}
+.ouverture.briser .pan:nth-child(1){--pousse:2.2%}
+.ouverture.briser .pan:nth-child(3){--pousse:-2.2%}
+.ouverture.briser .pan i{filter:brightness(.06) saturate(.15) contrast(1.2);
+  transform:scale(1.14)}
+.ouverture .pan{transform:translateX(0);
+  transition:transform 1.15s cubic-bezier(.16,1,.3,1)}
+
+/* les fissures, fermees puis ouvertes d'un trait */
+.ouverture.briser .cassure{animation:none;opacity:0;
+  transform:translateX(-50%) scaleY(0);transform-origin:top center}
+.cassure{transform-origin:top center}
+
+/* l'eclair qui descend le long de la cassure */
+.eclair{position:absolute;top:-6%;bottom:-6%;width:3px;z-index:4;
+  pointer-events:none;opacity:0;transform:translateX(-50%);
+  background:linear-gradient(180deg,transparent,#fff 45%,#fff 55%,transparent);
+  filter:blur(1px) drop-shadow(0 0 14px #fff) drop-shadow(0 0 40px var(--c1))}
+.ouverture.briser .eclair{animation:fendre .62s cubic-bezier(.4,0,.2,1) forwards}
+@keyframes fendre{
+  0%  {opacity:0;   transform:translateX(-50%) scaleY(0);   transform-origin:top center}
+  22% {opacity:1;   transform:translateX(-50%) scaleY(1);   transform-origin:top center}
+  60% {opacity:.95; transform:translateX(-50%) scaleY(1) scaleX(3.2)}
+  100%{opacity:0;   transform:translateX(-50%) scaleY(1) scaleX(1)}
+}
+
+/* on n'impose ce mouvement a personne : certains le supportent mal */
+@media (prefers-reduced-motion: reduce){
+  .ouverture.briser .pan,
+  .ouverture.briser .pan i,
+  .ouverture.briser .cassure{transform:none;filter:none;opacity:1;animation:none}
+  .eclair{display:none}
+}
+
 /* le nom du royaume, au pied de son panneau */
 .pan .sceau-roy{position:absolute;left:0;right:0;bottom:clamp(52px,9vh,86px);z-index:2;
   display:flex;flex-direction:column;align-items:center;gap:9px;
@@ -526,7 +567,7 @@ footer{border-top:1px solid var(--ligne);background:var(--nuit);
 </header>
 
 <!-- ═══════════════════════ OUVERTURE ═══════════════════════ -->
-<section class="ouverture" id="haut">
+<section class="ouverture briser" id="haut">
   <div class="fond">
     <div class="pan" style="--c:var(--altera);--fond:url(img/decor-altera.webp);--pos:64% 52%;--lum:.46">
       <i></i>
@@ -549,6 +590,8 @@ footer{border-top:1px solid var(--ligne);background:var(--nuit);
     </div>
     <i class="cassure" style="left:33.333%;--c1:var(--altera);--c2:var(--elysar)"></i>
     <i class="cassure" style="left:66.666%;--c1:var(--elysar);--c2:var(--noxaris);animation-delay:-2.5s"></i>
+    <i class="eclair" style="left:33.333%;--c1:var(--altera)" aria-hidden="true"></i>
+    <i class="eclair" style="left:66.666%;--c1:var(--noxaris);animation-delay:.12s" aria-hidden="true"></i>
   </div>
 
   <div class="dedans">
@@ -1054,6 +1097,23 @@ burger.onclick = () => {
 nav.querySelectorAll('a').forEach(a => a.onclick = () => {
   burger.classList.remove('ouvert'); nav.classList.remove('ouvert');
 });
+
+/* ── la cassure, puis les lignes qui montent ──
+   On retire « briser » apres l'eclair : les panneaux s'ecartent, la lumiere
+   revient, et les fissures reprennent leur battement normal.
+   Le retrait est aussi programme en secours : si l'evenement d'animation ne
+   part pas, un delai s'en charge. Personne ne doit rester devant un ecran
+   noir parce qu'un navigateur n'a pas joue le jeu. */
+(function briser(){
+  const o = document.querySelector('.ouverture');
+  if (!o) return;
+  const doux = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const ouvrir = () => o.classList.remove('briser');
+  if (doux) { ouvrir(); return; }
+  const eclair = o.querySelector('.eclair');
+  if (eclair) eclair.addEventListener('animationend', ouvrir, { once: true });
+  setTimeout(ouvrir, 900);          // secours
+})();
 
 /* ── l'ouverture : les lignes montent l'une après l'autre ── */
 addEventListener('load', () => {
