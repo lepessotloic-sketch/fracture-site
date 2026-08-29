@@ -1,0 +1,1262 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FRACTURE — La Guerre des Trois Couronnes</title>
+<meta name="description" content="Un royaume brisé, trois héritiers, une couronne. FRACTURE, jeu de collection et de combat en développement pour PC et mobile.">
+<link rel="icon" href="img/embleme-fracture.webp" type="image/webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════════════════════════
+   FRACTURE — site officiel
+   Étape 1 : le socle, la charte, et le premier chapitre.
+
+   La charte n'est pas inventée : elle est reprise de la maquette
+   d'accueil validée et du fichier d'identité visuelle. Codes couleur
+   des quatre camps, police Cinzel + Jost, cadres dorés ouvragés.
+
+   Les noms propres s'écrivent SANS ACCENT : ELDORIA, ALDEON, KAEDAN,
+   ETHEON, MALEKOR, ALTERA, ELYSAR, NOXARIS. Le texte courant, lui,
+   garde ses accents.
+   ══════════════════════════════════════════════════════════════ */
+:root{
+  /* l'or, colonne vertébrale de l'identité */
+  --or:#c9a227; --or-clair:#f2dda4; --or-vif:#e8c766; --or-sombre:#6b4f14;
+
+  /* les quatre camps — codes exacts du fichier d'identité validé */
+  --elysar:#3e7bfa; --altera:#c0392b; --noxaris:#8e44e0; --exiles:#c9a227;
+
+  /* le fond : la nuit d'avant la guerre */
+  --nuit:#07060b; --nuit-2:#0d0b14; --pierre:#151220; --pierre-2:#1e1a2b;
+  --encre:#ece6da; --encre-2:#a49b8d; --encre-3:#6d6579;
+
+  --ligne:rgba(201,162,39,.18); --ligne-fort:rgba(201,162,39,.42);
+  --titre:'Cinzel',Georgia,'Times New Roman',serif;
+  --texte:'Jost',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --lent:cubic-bezier(.16,1,.3,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--nuit);color:var(--encre);
+  font-family:var(--texte);font-weight:300;font-size:17px;line-height:1.7;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,h4{font-family:var(--titre);font-weight:700;margin:0;line-height:1.15;
+  letter-spacing:.04em}
+a{color:inherit;text-decoration:none}
+img{display:block;max-width:100%}
+::selection{background:rgba(201,162,39,.3)}
+
+/* ─────────────────────────────── le grain, partout ───────────────────── */
+/* Une texture très légère : sans elle les aplats sombres paraissent
+   plastiques sur grand écran. */
+body::after{content:'';position:fixed;inset:0;z-index:200;pointer-events:none;
+  opacity:.05;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ═══════════════════════════ EN-TÊTE ═══════════════════════════ */
+header{position:fixed;top:0;left:0;right:0;z-index:100;
+  transition:background .4s,border-color .4s,backdrop-filter .4s;
+  border-bottom:1px solid transparent}
+header.pose{background:rgba(7,6,11,.86);backdrop-filter:blur(14px);
+  border-bottom-color:var(--ligne)}
+.entete{max-width:1240px;margin:0 auto;padding:11px 24px;
+  display:flex;align-items:center;gap:26px}
+
+/* Le logo est provisoire : il n'existe pas encore en fichier, il n'est
+   peint que dans la maquette d'accueil. Ici il est composé en Cinzel.
+   À remplacer par le vrai logo dès qu'il est livré. */
+.marque{display:flex;align-items:center;gap:11px;flex:0 0 auto}
+.marque .sceau{width:32px;height:32px;flex:0 0 auto;
+  filter:drop-shadow(0 0 9px rgba(201,162,39,.4))}
+/* quand le vrai logo est la, il remplace l'ensemble sceau + mot */
+.marque .vrai-logo{height:40px;width:auto;display:block;
+  filter:drop-shadow(0 2px 8px rgba(0,0,0,.9))}
+.marque .vrai-logo[hidden]{display:none}
+.marque.vrai .sceau,.marque.vrai .mot{display:none}
+.marque .mot{font-family:var(--titre);font-weight:700;font-size:23px;
+  letter-spacing:.26em;line-height:1;
+  background:linear-gradient(180deg,#fff8e4 0%,var(--or-clair) 38%,var(--or) 72%,#8a6a1c 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  padding-right:.26em}
+
+nav{margin-left:auto;display:flex;gap:28px;align-items:center}
+nav a{font-family:var(--titre);font-size:11.5px;letter-spacing:.18em;
+  color:var(--encre-2);transition:color .2s;position:relative;padding:4px 0}
+nav a::after{content:'';position:absolute;left:0;right:100%;bottom:0;height:1px;
+  background:var(--or);transition:right .3s var(--lent)}
+nav a:hover{color:var(--or-clair)}
+nav a:hover::after{right:0}
+.bouton-discord{font-family:var(--titre);font-size:11px;letter-spacing:.16em;
+  padding:9px 18px;border:1px solid var(--ligne-fort);border-radius:3px;
+  color:var(--or-clair);transition:.25s;white-space:nowrap}
+.bouton-discord:hover{background:rgba(201,162,39,.12);border-color:var(--or)}
+.burger{display:none;margin-left:auto;width:38px;height:32px;cursor:pointer;
+  background:none;border:0;padding:6px;flex-direction:column;justify-content:space-between}
+.burger i{display:block;height:1.5px;background:var(--or-clair);transition:.3s var(--lent)}
+.burger.ouvert i:nth-child(1){transform:translateY(11px) rotate(45deg)}
+.burger.ouvert i:nth-child(2){opacity:0}
+.burger.ouvert i:nth-child(3){transform:translateY(-11px) rotate(-45deg)}
+
+@media(max-width:880px){
+  .burger{display:flex}
+  nav{position:fixed;inset:59px 0 auto 0;margin:0;flex-direction:column;gap:0;
+    background:rgba(7,6,11,.97);backdrop-filter:blur(18px);
+    border-bottom:1px solid var(--ligne);
+    max-height:0;overflow:hidden;transition:max-height .45s var(--lent)}
+  nav.ouvert{max-height:340px}
+  nav a{width:100%;text-align:center;padding:17px 0;font-size:13px;
+    border-bottom:1px solid rgba(255,255,255,.05)}
+  nav a::after{display:none}
+  .bouton-discord{margin:14px auto 20px;border-radius:3px}
+}
+
+/* ═══════════════════════════ OUVERTURE ═══════════════════════════ */
+.ouverture{position:relative;min-height:100svh;display:grid;place-items:center;
+  overflow:hidden;padding:110px 24px clamp(150px,24vh,240px);text-align:center}
+.ouverture .fond{position:absolute;inset:0;z-index:0;display:grid;
+  grid-template-columns:1fr 1fr 1fr}
+
+/* un panneau par royaume — ALTERA, ELYSAR, NOXARIS, dans cet ordre */
+.pan{position:relative;overflow:hidden}
+.pan i{position:absolute;inset:-4%;
+  /* le cadrage sort de l'image le titre qui y est peint */
+  background:var(--fond) var(--pos)/var(--zoom,auto 132%) no-repeat;
+  filter:brightness(var(--lum,.42)) saturate(.78) contrast(1.06);
+  transform:scale(1.02);
+  transition:filter .7s var(--lent),transform 1.4s var(--lent);
+  animation:deriver 26s ease-in-out infinite alternate}
+@keyframes deriver{from{transform:scale(1.02) translateY(0)}
+                   to  {transform:scale(1.09) translateY(-1.4%)}}
+/* la teinte du royaume, posee par-dessus : c'est ce qui separe les trois
+   panneaux a l'oeil, meme quand les images se ressemblent */
+.pan::before{content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,transparent 26%,var(--c) 190%);
+  opacity:.3;mix-blend-mode:soft-light;transition:opacity .7s}
+.pan::after{content:'';position:absolute;inset:0;z-index:1;
+  background:linear-gradient(180deg,rgba(7,6,11,.62) 0%,rgba(7,6,11,.2) 30%,
+                             rgba(7,6,11,.62) 66%,var(--nuit) 100%)}
+/* survol : le royaume vise se rallume, les deux autres s'effacent */
+.ouverture:has(.pan:hover) .pan i{filter:brightness(calc(var(--lum,.42) * .5)) saturate(.5) contrast(1.02)}
+.ouverture .pan:hover i{filter:brightness(calc(var(--lum,.42) * 1.75)) saturate(1) contrast(1.06);
+  transform:scale(1.06)}
+.ouverture .pan:hover::before{opacity:.55}
+
+/* les deux cassures : c'est par la que le royaume s'est brise */
+.cassure{position:absolute;top:-6%;bottom:-6%;width:2px;z-index:3;pointer-events:none;
+  transform:translateX(-50%);
+  background:linear-gradient(180deg,transparent,var(--c1) 18%,#fff 50%,var(--c2) 82%,transparent);
+  filter:blur(.7px) drop-shadow(0 0 9px var(--c1)) drop-shadow(0 0 26px var(--c2));
+  animation:battre 5s ease-in-out infinite}
+@keyframes battre{0%,100%{opacity:.55;transform:translateX(-50%) scaleX(1)}
+                  50%    {opacity:1;transform:translateX(-50%) scaleX(2.6)}}
+
+/* le nom du royaume, au pied de son panneau */
+.pan .sceau-roy{position:absolute;left:0;right:0;bottom:clamp(52px,9vh,86px);z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  opacity:0;transform:translateY(14px);transition:opacity .7s var(--lent),transform .7s var(--lent)}
+.ouverture.ouverte .pan .sceau-roy{opacity:1;transform:none}
+.pan .sceau-roy img{width:clamp(46px,5.6vw,66px);height:auto;border-radius:50%;
+  border:1px solid rgba(201,162,39,.45);
+  box-shadow:0 6px 20px rgba(0,0,0,.92),0 0 0 4px rgba(5,4,9,.5);
+  transition:transform .45s var(--lent),box-shadow .45s,border-color .45s}
+.pan:hover .sceau-roy img{transform:translateY(-4px) scale(1.07);border-color:var(--c);
+  box-shadow:0 6px 20px rgba(0,0,0,.92),0 0 0 4px rgba(5,4,9,.5),0 0 26px -2px var(--c)}
+.pan .sceau-roy b{font-family:var(--titre);font-size:clamp(10px,1.35vw,13px);
+  letter-spacing:.28em;color:var(--encre);text-shadow:0 2px 10px #000;padding-left:.28em}
+.pan .sceau-roy span{font-size:clamp(9.5px,1.1vw,11.5px);letter-spacing:.06em;
+  color:var(--encre-3);transition:color .4s}
+.pan:hover .sceau-roy span{color:var(--c)}
+@media(max-width:640px){ .pan .sceau-roy span{display:none} .pan .sceau-roy{gap:6px} }
+/* les voiles : ils enfoncent l'image pour que le texte tienne dessus */
+.ouverture .dedans::before{content:'';position:absolute;left:50%;top:50%;z-index:-1;
+  width:min(150%,1040px);height:min(150%,620px);transform:translate(-50%,-50%);
+  background:radial-gradient(ellipse at center,rgba(5,4,9,.9) 12%,rgba(5,4,9,.62) 46%,transparent 74%);
+  pointer-events:none}
+
+.ouverture .dedans{position:relative;z-index:2;max-width:820px;isolation:isolate}
+.sur-titre{font-family:var(--titre);font-size:clamp(9px,1.5vw,11.5px);letter-spacing:.42em;
+  color:var(--or);margin-bottom:20px;opacity:0}
+.grand-titre{opacity:0;margin:0 auto;width:min(92%,720px)}
+.grand-titre img{width:100%;height:auto;display:block;
+  filter:drop-shadow(0 6px 30px rgba(0,0,0,.85)) drop-shadow(0 0 46px rgba(201,162,39,.28))}
+.sous-titre{font-size:clamp(15px,2.3vw,20px);font-weight:200;color:var(--encre-2);
+  margin:18px auto 0;max-width:560px;letter-spacing:.02em;opacity:0}
+.sous-titre em{font-style:normal;color:var(--or-clair)}
+
+
+/* la descente est posee sous le nom du royaume du milieu */
+.descendre{position:absolute;left:50%;bottom:16px;transform:translateX(-50%);z-index:4;
+  display:flex;flex-direction:column;align-items:center;gap:7px;
+  opacity:0;transition:opacity .8s var(--lent) .9s}
+.ouverture.ouverte .descendre{opacity:1}
+.descendre span{font-family:var(--titre);font-size:8.5px;letter-spacing:.26em;color:var(--encre-3);
+  white-space:nowrap;transition:color .3s}
+.descendre:hover span{color:var(--or-clair)}
+.descendre i{display:block;width:1px;height:30px;
+  background:linear-gradient(180deg,var(--or),transparent);animation:couler 2.4s ease-in-out infinite}
+@keyframes couler{0%{transform:scaleY(.2);transform-origin:top;opacity:0}
+                  45%{transform:scaleY(1);opacity:1}
+                  100%{transform:scaleY(1);transform-origin:bottom;opacity:0}}
+
+/* ═══════════════════════════ SECTIONS ═══════════════════════════ */
+section{position:relative}
+.bloc{max-width:1160px;margin:0 auto;padding:clamp(80px,13vw,160px) 24px}
+.chapitre{font-family:var(--titre);font-size:10.5px;letter-spacing:.4em;color:var(--or);
+  display:flex;align-items:center;gap:14px;margin-bottom:22px}
+.chapitre::after{content:'';flex:1;height:1px;max-width:180px;
+  background:linear-gradient(90deg,var(--ligne-fort),transparent)}
+.titre-section{font-size:clamp(30px,5.6vw,58px);letter-spacing:.05em;
+  color:var(--encre);margin-bottom:8px}
+.titre-section em{font-style:normal;
+  background:linear-gradient(180deg,var(--or-clair),var(--or));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.filet{width:74px;height:1px;background:var(--or);margin:26px 0 30px;
+  box-shadow:0 0 14px var(--or)}
+.texte{font-size:clamp(15.5px,1.7vw,18.5px);color:var(--encre-2);max-width:660px;
+  font-weight:300}
+.texte + .texte{margin-top:20px}
+.texte b{color:var(--encre);font-weight:400}
+.texte .nom{font-family:var(--titre);font-weight:600;letter-spacing:.06em;color:var(--or-clair)}
+
+/* ── ELDORIA : le texte à gauche, la dynastie à droite ── */
+.deux{display:grid;grid-template-columns:1fr 1.05fr;gap:clamp(34px,6vw,74px);align-items:center}
+@media(max-width:940px){ .deux{grid-template-columns:1fr;gap:44px} }
+
+/* le cadre doré ouvragé, repris de la maquette validée */
+.cadre{position:relative;padding:9px;
+  background:linear-gradient(150deg,rgba(201,162,39,.34),rgba(201,162,39,.05) 40%,
+                             rgba(201,162,39,.03) 60%,rgba(201,162,39,.28));
+  border-radius:3px}
+.cadre::before,.cadre::after{content:'';position:absolute;width:17px;height:17px;
+  border:1px solid var(--or);pointer-events:none;z-index:2}
+.cadre::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.cadre::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.cadre .dedans{position:relative;overflow:hidden;background:var(--nuit-2);border-radius:1px}
+.cadre img{width:100%;height:auto;transition:transform 1.1s var(--lent)}
+.cadre:hover img{transform:scale(1.025)}
+.cadre .legende{position:absolute;left:0;right:0;bottom:0;z-index:2;
+  padding:34px 18px 13px;text-align:center;
+  background:linear-gradient(0deg,rgba(5,4,9,.94),transparent);
+  font-family:var(--titre);font-size:9.5px;letter-spacing:.24em;color:var(--or-clair)}
+
+/* ── la mort d'ALDEON : pleine largeur, sombre ── */
+.deuil{position:relative;overflow:hidden;
+  border-top:1px solid var(--ligne);border-bottom:1px solid var(--ligne);
+  background:linear-gradient(180deg,var(--nuit),#0a0812 50%,var(--nuit))}
+.deuil::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:min(90%,900px);height:1px;
+  background:linear-gradient(90deg,transparent,var(--or),transparent);opacity:.6}
+.deuil .bloc{display:grid;grid-template-columns:.85fr 1.15fr;gap:clamp(32px,6vw,72px);
+  align-items:center;max-width:1080px}
+@media(max-width:880px){ .deuil .bloc{grid-template-columns:1fr;gap:34px} }
+.deuil .mots{min-width:0}
+/* le portrait du roi, dans son cadre dore */
+.roi{position:relative}
+.roi .dedans{aspect-ratio:3/4}
+.roi img{width:100%;height:100%;object-fit:cover;object-position:50% 22%}
+
+/* ── les trois héritiers : l'annonce du chapitre suivant ── */
+.heritiers{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:52px}
+@media(max-width:760px){ .heritiers{grid-template-columns:1fr;gap:12px} }
+.heritier{position:relative;overflow:hidden;border-radius:3px;min-height:clamp(370px,40vw,460px);
+  border:1px solid var(--ligne);display:flex;flex-direction:column;justify-content:flex-end;
+  padding:22px 20px;transition:border-color .4s,transform .4s var(--lent)}
+.heritier::before{content:'';position:absolute;inset:0;z-index:0;
+  /* les decors sont desormais sans titre peint : « cover » suffit, et il
+     tient quelle que soit la hauteur de la carte */
+  background:linear-gradient(180deg,rgba(7,6,11,.35) 0%,rgba(7,6,11,.05) 24%,
+              rgba(7,6,11,.46) 48%,rgba(7,6,11,.9) 72%,rgba(7,6,11,.98) 100%),
+             var(--fond) var(--pos,50% 46%)/cover no-repeat;
+  transition:transform 1.2s var(--lent)}
+.heritier::after{content:'';position:absolute;left:0;right:0;top:0;height:2px;z-index:2;
+  background:linear-gradient(90deg,transparent,var(--c),transparent);
+  opacity:0;transition:opacity .4s}
+.heritier:hover{transform:translateY(-4px);border-color:var(--c)}
+.heritier:hover::before{transform:scale(1.06)}
+.heritier:hover::after{opacity:1}
+.heritier > *{position:relative;z-index:1}
+.heritier .rang{font-family:var(--titre);font-size:9px;letter-spacing:.22em;
+  color:var(--c);margin-bottom:7px;text-shadow:0 1px 6px #000,0 0 14px rgba(0,0,0,.9);
+  filter:brightness(1.35)}
+.heritier h3{font-size:clamp(20px,3vw,26px);letter-spacing:.12em;color:var(--encre);
+  text-shadow:0 2px 12px #000}
+.heritier p{margin:8px 0 0;font-size:13.5px;color:#c4bcae;font-weight:300;line-height:1.55;
+  text-shadow:0 1px 8px rgba(0,0,0,.95)}
+.heritier .royaume{margin-top:13px;font-family:var(--titre);font-size:9.5px;
+  letter-spacing:.16em;color:var(--encre-3)}
+
+/* le prince, debout devant son royaume.
+   Il deborde volontairement du cadre a droite : un personnage qui touche
+   le bord respire mieux qu'un personnage centre dans une vignette. */
+.heritier .prince{position:absolute;right:-7%;bottom:0;z-index:1;
+  height:92%;width:auto;max-width:70%;object-fit:contain;object-position:bottom;
+  filter:drop-shadow(0 12px 34px rgba(0,0,0,.9));
+  transition:transform 1.1s var(--lent)}
+.heritier:hover .prince{transform:translateY(-7px) scale(1.035)}
+/* le voile qui noie les pieds et rend le texte lisible par-dessus */
+.heritier .voile{position:absolute;left:0;right:0;bottom:0;height:52%;z-index:2;
+  pointer-events:none;
+  background:linear-gradient(180deg,transparent,rgba(7,6,11,.32) 38%,
+             rgba(7,6,11,.72) 72%,rgba(7,6,11,.92) 100%)}
+/* le texte repasse devant, et se garde de la place a gauche */
+.heritier > .rang,.heritier > h3,.heritier > p,.heritier > .royaume{z-index:3}
+.heritier > p{max-width:62%}
+@media(max-width:760px){
+  .heritier{min-height:420px}
+  .heritier .prince{right:-9%;height:88%;max-width:62%}
+  .heritier > p{max-width:66%}
+}
+
+/* ── l'état du développement : honnête, daté ── */
+.etat{border-top:1px solid var(--ligne);background:var(--nuit-2)}
+.etat .bloc{padding-top:clamp(60px,9vw,100px);padding-bottom:clamp(60px,9vw,100px)}
+.jalons{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:12px;margin-top:38px}
+.jalon{border:1px solid var(--ligne);border-radius:3px;padding:19px 20px;
+  background:linear-gradient(160deg,rgba(255,255,255,.022),transparent)}
+.jalon .puce{display:inline-flex;align-items:center;gap:7px;font-family:var(--titre);
+  font-size:8.5px;letter-spacing:.18em;padding:3px 9px;border-radius:2px;margin-bottom:11px}
+.jalon .puce i{width:5px;height:5px;border-radius:50%;background:currentColor;
+  box-shadow:0 0 8px currentColor}
+.puce.fait{color:#7fc48a;border:1px solid rgba(127,196,138,.34)}
+.puce.encours{color:var(--or-clair);border:1px solid var(--ligne-fort)}
+.puce.prevu{color:var(--encre-3);border:1px solid rgba(255,255,255,.1)}
+.jalon h4{font-size:14px;letter-spacing:.08em;color:var(--encre);margin-bottom:6px}
+.jalon p{margin:0;font-size:13.5px;color:var(--encre-2);line-height:1.55;font-weight:300}
+
+/* ── un royaume, en pleine largeur ── */
+.royaume{position:relative;border-top:1px solid var(--ligne);overflow:hidden}
+.royaume .bloc{display:grid;grid-template-columns:1fr 1.15fr;gap:clamp(34px,6vw,80px);
+  align-items:center}
+.royaume.retour .bloc{direction:rtl}
+.royaume.retour .bloc > *{direction:ltr}
+@media(max-width:940px){
+  .royaume .bloc,.royaume.retour .bloc{grid-template-columns:1fr;direction:ltr;gap:36px}
+}
+/* la couleur du royaume infuse le fond de sa section */
+.royaume::before{content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(70% 60% at var(--coin,15%) 40%,var(--c),transparent 68%);
+  opacity:.07}
+.royaume .bloc{position:relative;z-index:1}
+
+.tete-roy{display:flex;align-items:center;gap:15px;margin-bottom:20px}
+.tete-roy img{width:clamp(56px,7vw,80px);height:auto;flex:0 0 auto;border-radius:50%;
+  border:1px solid rgba(201,162,39,.4);
+  box-shadow:0 6px 20px rgba(0,0,0,.7),0 0 26px -6px var(--c)}
+.tete-roy .mots b{display:block;font-family:var(--titre);font-size:clamp(24px,4.2vw,40px);
+  letter-spacing:.11em;color:var(--encre);line-height:1.05}
+.tete-roy .mots span{display:block;font-size:clamp(12px,1.5vw,14.5px);color:var(--c);
+  letter-spacing:.06em;margin-top:5px}
+
+.chiffres{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+.chiffre{border:1px solid var(--ligne);border-radius:3px;padding:11px 15px;
+  background:rgba(255,255,255,.02);min-width:96px}
+.chiffre b{display:block;font-family:var(--titre);font-size:19px;color:var(--c);line-height:1}
+.chiffre span{display:block;font-size:9.5px;letter-spacing:.16em;color:var(--encre-3);
+  margin-top:5px;text-transform:uppercase}
+
+/* le decor du royaume, dans son cadre dore */
+.vue-roy{aspect-ratio:16/9;position:relative;
+  background:var(--img) var(--pos)/auto 132% no-repeat;
+  filter:brightness(.8) saturate(.92)}
+
+/* ── la mecanique de la Fracture ── */
+.energies{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:40px}
+@media(max-width:760px){ .energies{grid-template-columns:1fr} }
+.energie{border:1px solid var(--ligne);border-radius:3px;padding:20px 19px;
+  background:linear-gradient(160deg,rgba(255,255,255,.025),transparent)}
+.energie .duo{display:flex;align-items:center;gap:8px;margin-bottom:13px;flex-wrap:wrap}
+.energie .duo i{width:9px;height:9px;border-radius:50%;background:currentColor;
+  box-shadow:0 0 11px currentColor;flex:0 0 auto}
+.energie .duo em{font-style:normal;font-size:11px;letter-spacing:.12em;color:var(--encre-2)}
+.energie h4{font-family:var(--titre);font-size:16px;letter-spacing:.13em;
+  color:var(--r);margin-bottom:7px}
+.energie p{margin:0;font-size:13.5px;line-height:1.6;color:var(--encre-2)}
+
+/* ── le mur de heros ── */
+.tri{display:flex;gap:7px;flex-wrap:wrap;margin:34px 0 0}
+.tri button{cursor:pointer;padding:9px 17px;border-radius:3px;
+  border:1px solid var(--ligne);background:rgba(20,16,28,.6);color:var(--encre-2);
+  font-family:var(--titre);font-size:10px;letter-spacing:.15em;transition:.22s}
+.tri button:hover{border-color:var(--ligne-fort);color:var(--encre)}
+.tri button.on{color:#100d18;border-color:var(--c,var(--or));
+  background:linear-gradient(180deg,var(--or-clair),var(--c,var(--or)))}
+.compte-heros{font-size:11px;letter-spacing:.16em;color:var(--encre-3);margin:16px 0 22px;
+  text-transform:uppercase}
+
+.mur{column-count:6;column-gap:14px}
+@media(max-width:1200px){ .mur{column-count:5} }
+@media(max-width:940px){  .mur{column-count:4} }
+@media(max-width:680px){  .mur{column-count:3;column-gap:10px} }
+@media(max-width:440px){  .mur{column-count:2} }
+.heros{position:relative;margin:0 0 14px;break-inside:avoid;
+  transition:transform .3s var(--lent)}
+.heros img{width:100%;height:auto;display:block;border-radius:2px;
+  filter:drop-shadow(0 6px 15px rgba(0,0,0,.8)) drop-shadow(0 0 9px var(--c));
+  transition:filter .3s}
+.heros:hover{transform:translateY(-5px)}
+.heros:hover img{filter:drop-shadow(0 10px 22px rgba(0,0,0,.9)) drop-shadow(0 0 17px var(--c))}
+.heros .provisoire{position:absolute;top:6px;left:50%;transform:translateX(-50%);z-index:2;
+  font-family:var(--titre);font-size:7px;letter-spacing:.13em;padding:3px 8px;border-radius:2px;
+  color:#e8dcc0;background:rgba(8,6,14,.88);border:1px solid rgba(217,178,95,.45);
+  white-space:nowrap}
+.heros.brut img{opacity:.9}
+.heros figcaption{position:absolute;left:0;right:0;bottom:6px;text-align:center;
+  font-family:var(--titre);font-size:9.5px;letter-spacing:.1em;color:var(--encre-2);
+  opacity:0;transform:translateY(5px);transition:.28s var(--lent);pointer-events:none;
+  text-shadow:0 1px 6px #000}
+.heros:hover figcaption{opacity:1;transform:none}
+.avertir{margin-top:34px;border-left:2px solid var(--ligne-fort);padding:5px 0 5px 18px;
+  font-size:13.5px;color:var(--encre-3);line-height:1.65;max-width:680px}
+.avertir b{color:var(--encre-2);font-weight:400}
+
+/* ── les captures du jeu ── */
+.galerie{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:13px;
+  margin-top:40px}
+.vignette{position:relative;overflow:hidden;border-radius:3px;border:1px solid var(--ligne);
+  background:var(--nuit-2);aspect-ratio:16/9;cursor:zoom-in;
+  transition:border-color .35s,transform .35s var(--lent)}
+.vignette:hover{border-color:var(--ligne-fort);transform:translateY(-3px)}
+.vignette img{width:100%;height:100%;object-fit:cover;
+  transition:transform 1s var(--lent),filter .35s;filter:brightness(.86)}
+.vignette:hover img{transform:scale(1.04);filter:brightness(1)}
+.vignette b{position:absolute;left:0;right:0;bottom:0;z-index:2;padding:26px 13px 10px;
+  font-family:var(--titre);font-size:9.5px;letter-spacing:.2em;color:var(--or-clair);
+  font-weight:500;background:linear-gradient(0deg,rgba(5,4,9,.94),transparent)}
+.rien{border:1px dashed var(--ligne);border-radius:3px;padding:34px 22px;text-align:center;
+  margin-top:34px;background:rgba(255,255,255,.012)}
+.rien b{display:block;font-family:var(--titre);font-size:11px;letter-spacing:.2em;
+  color:var(--encre-2);margin-bottom:8px}
+.rien span{font-size:13.5px;color:var(--encre-3)}
+
+/* la loupe : une capture en grand, sur fond noir */
+.loupe{position:fixed;inset:0;z-index:150;background:rgba(4,3,8,.96);
+  display:none;place-items:center;padding:34px;cursor:zoom-out;
+  backdrop-filter:blur(6px)}
+.loupe.on{display:grid}
+.loupe img{max-width:100%;max-height:100%;border:1px solid var(--ligne-fort);border-radius:3px;
+  box-shadow:0 24px 70px rgba(0,0,0,.9)}
+
+/* le trait dore de la navigation */
+#nav a:not(.bouton-discord){position:relative;padding-bottom:3px}
+#nav a:not(.bouton-discord)::after{content:'';position:absolute;left:0;right:0;bottom:0;
+  height:1px;background:linear-gradient(90deg,transparent,var(--or),transparent);
+  transform:scaleX(0);transform-origin:center;transition:transform .45s var(--lent)}
+#nav a:not(.bouton-discord):hover::after,
+#nav a.ici::after{transform:scaleX(1)}
+#nav a.ici{color:var(--encre)}
+
+/* ── la signature de l'agence ── */
+.signature{margin-top:34px;padding-top:26px;border-top:1px solid var(--ligne);
+  display:flex;flex-direction:column;align-items:center;gap:11px}
+.signature .par{font-size:9.5px;letter-spacing:.26em;color:var(--encre-3);
+  text-transform:uppercase}
+.signature a{display:inline-flex;align-items:center;gap:12px;
+  transition:opacity .4s var(--lent);opacity:.86}
+.signature a:hover{opacity:1}
+/* le logo porte son propre nom grave dessous : sous 80 px il devient
+   illisible, autant ne pas le mettre du tout */
+.signature img{height:84px;width:auto;display:block;
+  filter:drop-shadow(0 4px 18px rgba(0,0,0,.7))}
+
+/* ── le journal de developpement ── */
+.journal{position:relative;margin-top:44px;padding-left:26px}
+/* le fil vertical qui relie les entrees */
+.journal::before{content:'';position:absolute;left:5px;top:8px;bottom:8px;width:1px;
+  background:linear-gradient(180deg,var(--or),rgba(201,162,39,.25) 60%,transparent)}
+.entree{position:relative;padding:0 0 30px}
+.entree:last-child{padding-bottom:0}
+.entree::before{content:'';position:absolute;left:-26px;top:6px;width:11px;height:11px;
+  border-radius:50%;background:var(--nuit);border:1px solid var(--or);
+  box-shadow:0 0 0 4px var(--nuit),0 0 14px rgba(201,162,39,.5)}
+.entree.neuf::before{background:var(--or);box-shadow:0 0 0 4px var(--nuit),0 0 18px var(--or)}
+.entree .quand{display:flex;align-items:center;gap:10px;margin-bottom:7px;flex-wrap:wrap}
+.entree .quand time{font-family:var(--titre);font-size:10px;letter-spacing:.18em;color:var(--or)}
+.entree .quand .qui{font-size:9px;letter-spacing:.14em;padding:2px 8px;border-radius:2px;
+  border:1px solid var(--ligne);color:var(--encre-3);text-transform:uppercase}
+.entree h4{font-size:16.5px;letter-spacing:.05em;color:var(--encre);margin-bottom:6px}
+.entree p{margin:0;font-size:14px;line-height:1.65;color:var(--encre-2);max-width:640px}
+
+/* ── le pied de page ── */
+footer{border-top:1px solid var(--ligne);background:var(--nuit);
+  padding:52px 24px 40px;text-align:center}
+.pied-logo{width:min(78%,320px);height:auto;margin:0 auto 18px;
+  filter:drop-shadow(0 4px 22px rgba(0,0,0,.8))}
+.pied-liens{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;margin:22px 0 26px}
+.pied-liens a{font-family:var(--titre);font-size:10.5px;letter-spacing:.16em;
+  color:var(--encre-2);transition:color .2s}
+.pied-liens a:hover{color:var(--or-clair)}
+.telecharger{display:inline-flex;flex-direction:column;align-items:center;gap:7px;
+  padding:15px 40px;border:1px solid rgba(255,255,255,.1);border-radius:3px;
+  color:var(--encre-3);cursor:not-allowed;background:rgba(255,255,255,.015)}
+.telecharger b{font-family:var(--titre);font-size:12.5px;letter-spacing:.2em}
+.telecharger small{font-size:10.5px;letter-spacing:.1em}
+.mentions{margin-top:30px;font-size:11.5px;color:var(--encre-3);line-height:1.7}
+
+/* ── l'apparition au défilement ── */
+.venir{opacity:0;transform:translateY(26px);
+  transition:opacity .85s var(--lent),transform .85s var(--lent)}
+.venir.la{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:.01ms!important;transition-duration:.01ms!important}
+  .venir{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+
+<header id="tete">
+  <div class="entete">
+    <a class="marque" href="#haut">
+      <img class="vrai-logo" src="img/logo-fracture.webp" alt="FRACTURE" hidden>
+      <img class="sceau" src="img/embleme-fracture.webp" alt="">
+      <span class="mot">FRACTURE</span>
+    </a>
+    <button class="burger" id="burger" aria-label="Menu"><i></i><i></i><i></i></button>
+    <nav id="nav">
+      <a href="#eldoria">L'HISTOIRE</a>
+      <a href="#royaumes">LES ROYAUMES</a>
+      <a href="#heros">LES HEROS</a>
+      <a href="#journal">LE JOURNAL</a>
+      <a class="bouton-discord" href="#" data-lien="discord">REJOINDRE LE DISCORD</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════════════ OUVERTURE ═══════════════════════ -->
+<section class="ouverture" id="haut">
+  <div class="fond">
+    <div class="pan" style="--c:var(--altera);--fond:url(img/decor-altera.webp);--pos:64% 52%;--lum:.46">
+      <i></i>
+      <div class="sceau-roy">
+        <img src="img/sceau-altera.webp" alt=""><b>ALTERA</b><span>Le Palais du Lion</span>
+      </div>
+    </div>
+    <div class="pan" style="--c:var(--elysar);--fond:url(img/decor-elysar.webp);--pos:50% 42%;--lum:.36">
+      <i style="animation-delay:-9s"></i>
+      <div class="sceau-roy">
+        <img src="img/sceau-elysar.webp" alt=""><b>ELYSAR</b><span>Le Royaume des Cieux</span>
+      </div>
+      <a class="descendre" href="#eldoria"><span>AVANT LA GUERRE</span><i></i></a>
+    </div>
+    <div class="pan" style="--c:var(--noxaris);--fond:url(img/decor-noxaris.webp);--pos:56% 40%;--lum:.54">
+      <i style="animation-delay:-17s"></i>
+      <div class="sceau-roy">
+        <img src="img/sceau-noxaris.webp" alt=""><b>NOXARIS</b><span>La Citadelle de l'Eclipse</span>
+      </div>
+    </div>
+    <i class="cassure" style="left:33.333%;--c1:var(--altera);--c2:var(--elysar)"></i>
+    <i class="cassure" style="left:66.666%;--c1:var(--elysar);--c2:var(--noxaris);animation-delay:-2.5s"></i>
+  </div>
+
+  <div class="dedans">
+    <div class="sur-titre" data-monter="0">UN ROYAUME · TROIS FILS · UNE COURONNE</div>
+    <h1 class="grand-titre" data-monter="1">
+      <img src="img/logo-fracture.webp" alt="FRACTURE">
+    </h1>
+    <p class="sous-titre" data-monter="2">
+      ELDORIA n'existe plus. À la mort du roi <em>ALDEON</em>, ses trois fils
+      ont refusé de se plier au même trône — et le royaume s'est brisé en trois.
+    </p>
+
+
+  </div>
+
+
+</section>
+
+<!-- ═══════════════════════ ELDORIA ═══════════════════════ -->
+<section id="eldoria">
+  <div class="bloc deux">
+    <div class="venir">
+      <div class="chapitre">CHAPITRE PREMIER</div>
+      <h2 class="titre-section">Le royaume<br><em>ELDORIA</em></h2>
+      <div class="filet"></div>
+      <p class="texte">
+        Avant la guerre, <b>ALTERA, ELYSAR et NOXARIS n'existaient pas.</b>
+        Le territoire ne formait qu'un seul grand royaume : <span class="nom">ELDORIA</span>.
+      </p>
+      <p class="texte">
+        Un seul trône, une seule couronne, une seule armée. Les cieux, les terres
+        rouges et les profondeurs répondaient au même nom. Ce que l'on appelle
+        aujourd'hui trois royaumes n'était alors que trois provinces d'un même monde.
+      </p>
+      <p class="texte">
+        À sa tête régnait <span class="nom">ALDEON</span>, dernier roi du royaume unifié,
+        et père de trois fils : <span class="nom">KAEDAN</span>,
+        <span class="nom">ETHEON</span> et <span class="nom">MALEKOR</span>.
+      </p>
+    </div>
+
+    <div class="venir">
+      <figure class="cadre" style="margin:0">
+        <div class="dedans">
+          <img src="img/dynastie.webp" alt="ALDEON et ses trois fils, avant la Guerre des Trois Couronnes" loading="lazy">
+          <figcaption class="legende">LA DYNASTIE D'ELDORIA — AVANT LA GUERRE</figcaption>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ LA MORT D'ALDEON ═══════════════════════ -->
+<section class="deuil" id="aldeon">
+  <div class="bloc">
+    <div class="venir">
+      <figure class="cadre roi" style="margin:0">
+        <div class="dedans">
+          <img src="img/portrait-aldeon.webp" alt="ALDEON, dernier roi du royaume unifié" loading="lazy">
+          <div class="legende">ALDEON — DERNIER ROI DU ROYAUME UNIFIE</div>
+        </div>
+      </figure>
+    </div>
+
+    <div class="mots venir">
+    <div class="chapitre">CHAPITRE DEUXIEME</div>
+    <h2 class="titre-section">La mort d'<em>ALDEON</em></h2>
+    <div class="filet"></div>
+
+    <p class="texte">
+      <span class="nom">ALDEON</span> meurt avant que ce récit ne commence. Il ne verra
+      rien de la guerre que sa mort déclenche.
+    </p>
+    <p class="texte">
+      Sa volonté est claire : <span class="nom">KAEDAN</span>, l'aîné, est désigné
+      <b>héritier légitime</b> du royaume. Pas encore roi — héritier. La couronne
+      d'ELDORIA l'attend, et elle n'attendra jamais personne.
+    </p>
+    <p class="texte">
+      Car <span class="nom">ETHEON</span> et <span class="nom">MALEKOR</span> refusent
+      de le reconnaître. Chacun des trois princes rallie sa part de l'armée, de la
+      population et du territoire. En quelques mois, <b>le royaume unifié cesse
+      d'exister</b>.
+    </p>
+    <p class="texte" style="color:var(--or-clair)">
+      C'est la <b>Guerre des Trois Couronnes</b>.
+    </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ LES TROIS HERITIERS ═══════════════════════ -->
+<section id="heritiers">
+  <div class="bloc">
+    <div class="venir">
+      <div class="chapitre">CHAPITRE TROISIEME</div>
+      <h2 class="titre-section">Les trois <em>héritiers</em></h2>
+      <div class="filet"></div>
+      <p class="texte">
+        Trois fils du même père. Trois refus. Trois royaumes nés d'une seule
+        cassure — et un quatrième camp qui n'a jamais voulu choisir.
+      </p>
+    </div>
+
+    <div class="heritiers venir">
+      <article class="heritier" style="--c:var(--altera);--fond:url(img/decor-altera.webp);--pos:62% 48%">
+        <div class="rang">PRINCE HERITIER</div>
+        <img class="prince" src="img/prince-kaedan.webp" alt="KAEDAN, prince heritier d’ALTERA" loading="lazy">
+        <span class="voile"></span>
+        <h3>KAEDAN</h3>
+        <p>Désigné par son père. Contesté par ses frères. Il portera la couronne
+           qu'on lui refuse.</p>
+        <div class="royaume">FUTUR ROI D'ALTERA</div>
+      </article>
+
+      <article class="heritier" style="--c:var(--elysar);--fond:url(img/decor-elysar.webp);--pos:50% 40%">
+        <div class="rang">PRINCE CELESTE</div>
+        <img class="prince" src="img/prince-etheon.webp" alt="ETHEON, prince celeste d’ELYSAR" loading="lazy">
+        <span class="voile"></span>
+        <h3>ETHEON</h3>
+        <p>Il ne reconnaît pas l'aîné. Il emmène les cieux avec lui et fonde son
+           propre royaume.</p>
+        <div class="royaume">FUTUR ROI D'ELYSAR</div>
+      </article>
+
+      <article class="heritier" style="--c:var(--noxaris);--fond:url(img/decor-noxaris.webp);--pos:56% 40%">
+        <div class="rang">PRINCE DES PROFONDEURS</div>
+        <img class="prince" src="img/prince-malekor.webp" alt="MALEKOR, prince des profondeurs de NOXARIS" loading="lazy">
+        <span class="voile"></span>
+        <h3>MALEKOR</h3>
+        <p>Le dernier des trois. Il descend sous le monde et bâtit sa citadelle
+           dans l'éclipse.</p>
+        <div class="royaume">FUTUR ROI DE NOXARIS</div>
+      </article>
+    </div>
+
+    <div class="venir" style="margin-top:44px">
+      <p class="texte" style="max-width:720px">
+        Il reste ceux qui n'ont pas suivi. Les anciens gardes royaux d'ALDEON, fidèles
+        à une couronne qui n'existe plus, refusent de choisir entre les trois frères.
+        Ce sont les <span class="nom">EXILES</span> — <b>ils ne forment pas un quatrième
+        royaume</b>, seulement la mémoire de l'ancien monde.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ LES ROYAUMES ═══════════════════════ -->
+<section id="royaumes">
+  <div class="bloc venir" style="padding-bottom:0">
+    <div class="chapitre">CHAPITRE QUATRIEME</div>
+    <h2 class="titre-section">Ce qu'il reste<br><em>d'ELDORIA</em></h2>
+    <div class="filet"></div>
+    <p class="texte">
+      Trois royaumes, nés le même jour et de la même cassure. Et ceux qui n'ont
+      voulu d'aucun des trois.
+    </p>
+  </div>
+</section>
+
+<section class="royaume" style="--c:var(--altera);--coin:12%">
+  <div class="bloc">
+    <div class="venir">
+      <div class="tete-roy">
+        <img src="img/sceau-altera.webp" alt="">
+        <div class="mots"><b>ALTERA</b><span>Le Palais du Lion</span></div>
+      </div>
+      <p class="texte">Le royaume de <span class="nom">KAEDAN</span>, l'aîné, celui que son père avait
+   désigné. Il a emmené avec lui les terres rouges, les forêts et la pierre.</p>
+      <p class="texte">Altera se bat avec la <b>Braise</b> : une énergie qui brûle dans la durée plutôt
+   que d'éclater d'un coup. C'est le plus nombreux des trois royaumes.</p>
+      <div class="chiffres"><div class="chiffre"><b>31</b><span>héros</span></div><div class="chiffre"><b>Braise</b><span>énergie</span></div><div class="chiffre"><b>Lion</b><span>emblème</span></div></div>
+    </div>
+    <div class="venir">
+      <figure class="cadre" style="margin:0">
+        <div class="dedans">
+          <div class="vue-roy" style="--img:url(img/decor-altera.webp);--pos:50% 50%;background-size:cover"></div>
+          <div class="legende">LE PALAIS DU LION</div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="royaume retour" style="--c:var(--elysar);--coin:88%">
+  <div class="bloc">
+    <div class="venir">
+      <div class="tete-roy">
+        <img src="img/sceau-elysar.webp" alt="">
+        <div class="mots"><b>ELYSAR</b><span>Le Royaume des Cieux</span></div>
+      </div>
+      <p class="texte">Le royaume d'<span class="nom">ETHEON</span>, le prince céleste. Il n'a pas contesté
+   par ambition mais par refus : il ne reconnaissait pas l'aîné.</p>
+      <p class="texte">Elysar combat par la <b>Lumière</b> — protections, soins, frappes nettes. C'est le
+   royaume qui tient, là où les autres percent.</p>
+      <div class="chiffres"><div class="chiffre"><b>19</b><span>héros</span></div><div class="chiffre"><b>Lumière</b><span>énergie</span></div><div class="chiffre"><b>Ailes</b><span>emblème</span></div></div>
+    </div>
+    <div class="venir">
+      <figure class="cadre" style="margin:0">
+        <div class="dedans">
+          <div class="vue-roy" style="--img:url(img/decor-elysar.webp);--pos:50% 46%;background-size:cover"></div>
+          <div class="legende">LE ROYAUME DES CIEUX</div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="royaume" style="--c:var(--noxaris);--coin:12%">
+  <div class="bloc">
+    <div class="venir">
+      <div class="tete-roy">
+        <img src="img/sceau-noxaris.webp" alt="">
+        <div class="mots"><b>NOXARIS</b><span>La Citadelle de l'Eclipse</span></div>
+      </div>
+      <p class="texte">Le royaume de <span class="nom">MALEKOR</span>, le dernier des trois. Il est descendu
+   sous le monde et a bâti sa citadelle dans l'ombre de l'éclipse.</p>
+      <p class="texte">Noxaris frappe par l'<b>Eclipse</b> : poisons, affaiblissements, coups portés dans le
+   dos. On le voit rarement venir.</p>
+      <div class="chiffres"><div class="chiffre"><b>24</b><span>héros</span></div><div class="chiffre"><b>Eclipse</b><span>énergie</span></div><div class="chiffre"><b>Crâne</b><span>emblème</span></div></div>
+    </div>
+    <div class="venir">
+      <figure class="cadre" style="margin:0">
+        <div class="dedans">
+          <div class="vue-roy" style="--img:url(img/decor-noxaris.webp);--pos:50% 46%;background-size:cover"></div>
+          <div class="legende">LA CITADELLE DE L'ECLIPSE</div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="royaume retour" style="--c:var(--exiles);--coin:88%">
+  <div class="bloc">
+    <div class="venir">
+      <div class="tete-roy">
+        <img src="img/sceau-exiles.webp" alt="">
+        <div class="mots"><b>LES EXILES</b><span>Aucun trône</span></div>
+      </div>
+      <p class="texte">Ce ne sont <b>pas un quatrième royaume</b>. Ce sont les anciens gardes royaux
+   d'<span class="nom">ALDEON</span>, restés fidèles à une couronne qui n'existe plus.</p>
+      <p class="texte">Quand la guerre a commencé, ils ont refusé de choisir entre les trois frères. Leur
+   énergie est <b>neutre</b> : ils ne fracturent rien eux-mêmes — ils font détoner ce
+   que les autres ont posé.</p>
+      <div class="chiffres"><div class="chiffre"><b>10</b><span>héros</span></div><div class="chiffre"><b>Neutre</b><span>énergie</span></div><div class="chiffre"><b>Eclat</b><span>emblème</span></div></div>
+    </div>
+    <div class="venir">
+      <figure class="cadre" style="margin:0">
+        <div class="dedans">
+          <div class="vue-roy" style="--img:url(img/decor-exiles.webp);--pos:50% 52%;background-size:cover"></div>
+          <div class="legende">LA MEMOIRE DE L'ANCIEN MONDE</div>
+        </div>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ LA FRACTURE ═══════════════════════ -->
+<section id="fracture" class="etat">
+  <div class="bloc venir">
+    <div class="chapitre">LE SYSTEME DE COMBAT</div>
+    <h2 class="titre-section">La <em>Fracture</em></h2>
+    <div class="filet"></div>
+    <p class="texte">
+      Chaque héros porte l'énergie de son royaume. Quand <b>deux énergies différentes</b>
+      touchent le même ennemi, elles ne s'additionnent pas : elles se fracturent.
+      C'est la mécanique qui donne son nom au jeu.
+    </p>
+
+    <div class="energies">
+      <div class="energie" style="--r:#ff9a5e">
+        <div class="duo">
+          <i style="color:var(--altera)"></i><em>BRAISE</em>
+          <em style="color:var(--encre-3)">+</em>
+          <i style="color:var(--elysar)"></i><em>LUMIERE</em>
+        </div>
+        <h4>EMBRASEMENT</h4>
+        <p>L'ennemi explose et blesse ceux qui l'entourent.</p>
+      </div>
+      <div class="energie" style="--r:#c07ce8">
+        <div class="duo">
+          <i style="color:var(--altera)"></i><em>BRAISE</em>
+          <em style="color:var(--encre-3)">+</em>
+          <i style="color:var(--noxaris)"></i><em>ECLIPSE</em>
+        </div>
+        <h4>CORRUPTION</h4>
+        <p>Des dégâts dans la durée, et les soins qu'il reçoit sont coupés.</p>
+      </div>
+      <div class="energie" style="--r:#9fd0ff">
+        <div class="duo">
+          <i style="color:var(--noxaris)"></i><em>ECLIPSE</em>
+          <em style="color:var(--encre-3)">+</em>
+          <i style="color:var(--elysar)"></i><em>LUMIERE</em>
+        </div>
+        <h4>FAILLE</h4>
+        <p>L'armure se brise et tous les dégâts suivants sont amplifiés.</p>
+      </div>
+    </div>
+
+    <p class="texte" style="margin-top:26px">
+      Les <span class="nom">EXILES</span> sont neutres : ils ne posent aucune énergie,
+      mais ils déclenchent celles qui sont déjà là. Une équipe mélangée frappe plus fort
+      qu'une équipe d'un seul royaume — c'est ce qui pousse à collectionner.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════ LES HEROS ═══════════════════════ -->
+<section id="heros">
+  <div class="bloc">
+    <div class="venir">
+      <div class="chapitre">LES PERSONNAGES</div>
+      <h2 class="titre-section">Quatre-vingt-quatre <em>héros</em></h2>
+      <div class="filet"></div>
+      <p class="texte">
+        Chacun a son royaume, son rôle et son illustration. Cinq rôles se partagent le
+        champ de bataille : Gardien, Briseur, Traqueur, Soutien, Soigneur.
+      </p>
+    </div>
+
+    <div class="tri venir" id="tri"></div>
+    <div class="compte-heros" id="compteHeros"></div>
+    <div class="mur" id="mur"></div>
+
+    <p class="avertir venir">
+      <b>Où en sont ces personnages.</b> Cinquante-trois ont leur illustration finie et
+      validée. <b>Trente-et-un portent la mention « illustration provisoire »</b> : leur
+      carte définitive reste à peindre. Les kits de compétences sont écrits pour tous.
+      En revanche, <b>un seul personnage est aujourd'hui en cours de passage en 3D
+      jouable</b> : KAEDAN. Les autres n'existent encore que sous cette forme.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════ LE JEU EN IMAGES ═══════════════════════ -->
+<section id="images">
+  <div class="bloc">
+    <div class="venir">
+      <div class="chapitre">LE JEU EN IMAGES</div>
+      <h2 class="titre-section">Pris <em>dans le moteur</em></h2>
+      <div class="filet"></div>
+      <p class="texte">
+        Des captures reelles du jeu en cours de developpement — pas des
+        illustrations, pas des maquettes. Ce que tu vois ici tourne vraiment.
+      </p>
+    </div>
+    <div class="galerie" id="galerie"></div>
+    <div class="rien" id="rienEncore" hidden>
+      <b>AUCUNE CAPTURE DISPONIBLE POUR LE MOMENT</b>
+      <span>Elles arriveront quand une scene sera assez avancee pour etre montree.</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ LE DEVELOPPEMENT ═══════════════════════ -->
+<section class="etat" id="etat">
+  <div class="bloc">
+    <div class="venir">
+      <div class="chapitre">EN CE MOMENT</div>
+      <h2 class="titre-section">Où en est <em>le jeu</em></h2>
+      <div class="filet"></div>
+      <p class="texte">
+        FRACTURE est <b>en développement</b>, version interne <b>0.5.2</b>. Cette page dit
+        ce qui existe vraiment et ce qui n'est encore qu'un projet — rien n'y est
+        présenté comme terminé tant que ça ne l'est pas.
+      </p>
+    </div>
+
+    <div class="jalons venir">
+      <div class="jalon">
+        <span class="puce fait"><i></i>FAIT</span>
+        <h4>L'univers</h4>
+        <p>Les quatre camps, leurs blasons, leurs couleurs et le récit d'ELDORIA
+           sont écrits et validés.</p>
+      </div>
+      <div class="jalon">
+        <span class="puce fait"><i></i>FAIT</span>
+        <h4>Les héros</h4>
+        <p>82 personnages illustrés, avec leur royaume, leur rôle et leurs
+           compétences.</p>
+      </div>
+      <div class="jalon">
+        <span class="puce encours"><i></i>EN COURS</span>
+        <h4>Le premier personnage 3D</h4>
+        <p>KAEDAN passe du dessin au modèle jouable. Sa planche technique est
+           validée, la production a commencé.</p>
+      </div>
+      <div class="jalon">
+        <span class="puce encours"><i></i>EN COURS</span>
+        <h4>L'arène de combat</h4>
+        <p>Le terrain, la caméra et les premiers échanges de coups sont en place
+           dans le moteur.</p>
+      </div>
+      <div class="jalon">
+        <span class="puce prevu"><i></i>PREVU</span>
+        <h4>Le launcher PC</h4>
+        <p>Il vérifiera la version, téléchargera les mises à jour et lancera le
+           jeu. Il arrivera avec la première version jouable.</p>
+      </div>
+      <div class="jalon">
+        <span class="puce prevu"><i></i>PREVU</span>
+        <h4>Les modes de jeu</h4>
+        <p>Campagne, tour scellée, invocations et affrontements entre joueurs.
+           Rien n'est encore jouable publiquement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════ LE JOURNAL ═══════════════════════ -->
+<section id="journal" class="etat">
+  <div class="bloc">
+    <div class="venir">
+      <div class="chapitre">JOURNAL DE DEVELOPPEMENT</div>
+      <h2 class="titre-section">Ce qui s'est <em>passé</em></h2>
+      <div class="filet"></div>
+      <p class="texte">
+        Ce journal dit ce qui a été fait, avec sa date. Pas ce qui est prévu,
+        pas ce qui est espéré.
+      </p>
+    </div>
+
+    <div class="journal venir" id="journalListe"></div>
+  </div>
+</section>
+
+<footer>
+  <img class="pied-logo" src="img/logo-fracture.webp" alt="FRACTURE">
+  <p class="texte" style="margin:0 auto;max-width:460px;text-align:center;font-size:14.5px">
+    La Guerre des Trois Couronnes — jeu de collection et de combat,
+    en développement pour PC et mobile.
+  </p>
+
+  <div class="pied-liens">
+    <a href="#eldoria">L'HISTOIRE</a>
+    <a href="#royaumes">LES ROYAUMES</a>
+    <a href="#heros">LES HEROS</a>
+    <a href="#images">LE JEU</a>
+    <a href="#etat">LE DEVELOPPEMENT</a>
+    <a href="#journal">LE JOURNAL</a>
+    <a href="#" data-lien="discord">DISCORD</a>
+  </div>
+
+  <div class="telecharger" title="Disponible à la première version jouable">
+    <b>TELECHARGER LE JEU</b>
+    <small>pas encore disponible</small>
+  </div>
+
+  <div class="signature">
+    <span class="par">Un site signé</span>
+    <a href="https://impact-nva.fr" target="_blank" rel="noopener">
+      <img src="img/impact-nva.webp" alt="Impact-NVA">
+    </a>
+  </div>
+
+  <p class="mentions">
+    FRACTURE — projet indépendant en cours de développement.<br>
+    Les images présentées sont des illustrations de conception. © 2026
+  </p>
+</footer>
+
+<div class="loupe" id="loupe"><img id="loupeImg" src="" alt=""></div>
+
+<script src="heros.js"></script>
+<script src="provisoires.js"></script>
+<script>
+'use strict';
+
+/* ── la navigation suit la lecture ──
+   On retient la derniere section dont le haut est passe au-dessus du tiers
+   de l'ecran : c'est celle qu'on est en train de lire. */
+(function navSuit(){
+  /* le bouton Discord porte href="#" en attendant son lien : ce n'est pas
+     une ancre, et « # » tout seul ferait planter querySelector. */
+  const liens = [...document.querySelectorAll('#nav a[href^="#"]')]
+                  .filter(a => a.getAttribute('href').length > 1);
+  const cibles = liens.map(a => document.querySelector(a.getAttribute('href')))
+                      .map((e, i) => e && { e, a: liens[i] }).filter(Boolean);
+  if (!cibles.length) return;
+  const relire = () => {
+    const seuil = innerHeight / 3;
+    let vu = null;
+    for (const c of cibles) if (c.e.getBoundingClientRect().top <= seuil) vu = c;
+    liens.forEach(a => a.classList.remove('ici'));
+    if (vu) vu.a.classList.add('ici');
+  };
+  addEventListener('scroll', relire, { passive: true });
+  relire();
+})();
+
+/* ── l'en-tête se pose dès qu'on quitte le haut ── */
+const tete = document.getElementById('tete');
+const poser = () => tete.classList.toggle('pose', scrollY > 40);
+addEventListener('scroll', poser, { passive: true });
+poser();
+
+/* ── le menu du téléphone ── */
+const burger = document.getElementById('burger'), nav = document.getElementById('nav');
+burger.onclick = () => {
+  burger.classList.toggle('ouvert');
+  nav.classList.toggle('ouvert');
+};
+nav.querySelectorAll('a').forEach(a => a.onclick = () => {
+  burger.classList.remove('ouvert'); nav.classList.remove('ouvert');
+});
+
+/* ── l'ouverture : les lignes montent l'une après l'autre ── */
+addEventListener('load', () => {
+  document.querySelector('.ouverture').classList.add('ouverte');
+  document.querySelectorAll('[data-monter]').forEach(e => {
+    const i = +e.dataset.monter;
+    e.animate(
+      [{ opacity: 0, transform: 'translateY(22px)' }, { opacity: 1, transform: 'none' }],
+      { duration: 1000, delay: 260 + i * 190, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+  });
+});
+
+/* ── les sections apparaissent au défilement ── */
+const oeil = new IntersectionObserver(entrees => {
+  for (const e of entrees){
+    if (!e.isIntersecting) continue;
+    e.target.classList.add('la');
+    oeil.unobserve(e.target);
+  }
+}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+document.querySelectorAll('.venir').forEach(e => oeil.observe(e));
+
+/* ── le mur des héros ──
+   Le tri par royaume, et rien d'autre : on montre les illustrations, pas
+   des fiches de personnage qui promettraient un jeu qui n'existe pas encore. */
+const CAMPS = [
+  { id:'tous',    nom:'TOUS',       c:'var(--or)' },
+  { id:'altera',  nom:'ALTERA',     c:'var(--altera)' },
+  { id:'elysar',  nom:'ELYSAR',     c:'var(--elysar)' },
+  { id:'noxaris', nom:'NOXARIS',    c:'var(--noxaris)' },
+  { id:'exiles',  nom:'LES EXILES', c:'var(--exiles)' },
+];
+/* Deux héros n'ont pas de carte entière : leur planche d'origine était
+   coupée en bas. Pour eux seulement, on retombe sur le portrait. */
+const SANS_CARTE = ['saryne', 'ormond'];
+/* PROVISOIRES vient de provisoires.js : ce sont les heros dont la seule
+   image existante est une vignette decoupee dans une capture d'ecran de
+   maquette. Leur carte definitive reste a peindre. */
+let campActif = 'tous';
+
+function peindreTri(){
+  const z = document.getElementById('tri');
+  z.innerHTML = '';
+  for (const c of CAMPS){
+    const b = document.createElement('button');
+    b.textContent = c.nom;
+    b.style.setProperty('--c', c.c);
+    b.className = c.id === campActif ? 'on' : '';
+    b.onclick = () => { campActif = c.id; peindreTri(); peindreMur(); };
+    z.appendChild(b);
+  }
+}
+
+function peindreMur(){
+  const z = document.getElementById('mur');
+  const liste = HEROS.filter(h => campActif === 'tous' || h.clan === campActif);
+  const teinte = (CAMPS.find(c => c.id === campActif) || CAMPS[0]).c;
+
+  document.getElementById('compteHeros').textContent =
+    liste.length + (campActif === 'tous' ? ' héros au total' : ' héros dans ce camp');
+
+  z.innerHTML = liste.map(h => {
+    const c = 'var(--' + h.clan + ')';
+    const src = SANS_CARTE.includes(h.id) ? 'cartes/' + h.id + '.webp'
+                                          : 'cartes/' + h.id + '.webp';
+    const brut = PROVISOIRES.includes(h.id);
+    return '<figure class="heros' + (brut ? ' brut' : '') + '" style="--c:' + c + '">' +
+             (brut ? '<span class="provisoire">ILLUSTRATION PROVISOIRE</span>' : '') +
+             '<img src="' + src + '" alt="' + h.nom + '" loading="lazy">' +
+             '<figcaption>' + h.nom.toUpperCase() + '</figcaption>' +
+           '</figure>';
+  }).join('');
+}
+
+peindreTri();
+peindreMur();
+
+/* ── le vrai logo, des qu'il existe ──
+   Aucune ligne a changer le jour ou il arrive : on depose le fichier
+   dans fracture-site/img/logo-fracture.png et la page le prend. */
+(function logo(){
+  const img = document.querySelector('.marque .vrai-logo');
+  if (!img) return;
+  const test = new Image();
+  test.onload = () => { img.hidden = false; img.closest('.marque').classList.add('vrai'); };
+  test.onerror = () => {};
+  test.src = img.getAttribute('src');
+})();
+
+/* ── le journal ──
+   Pour ajouter une entree : une ligne de plus en haut du tableau.
+   d = date affichee, qui = l'equipe concernee, t = titre, p = ce qui s'est passe. */
+const JOURNAL = [
+  { d:'29 AOUT 2026', qui:'direction artistique',
+    t:"Les trois heritiers ont un visage",
+    p:"Les planches techniques officielles de KAEDAN, ETHEON et MALEKOR sont " +
+      "livrees en 4K : face, profil, dos et armes. Les trois princes rejoignent " +
+      "le site. Plus aucun des trois n'est un nom sans corps." },
+  { d:'28 AOUT 2026', qui:'site',
+    t:"Le site officiel ouvre",
+    p:"Premiere version : l'histoire d'ELDORIA, la mort d'ALDEON, les trois heritiers, " +
+      "les quatre camps, la mecanique de la Fracture et les 84 heros." },
+  { d:'28 AOUT 2026', qui:'production',
+    t:"Un royaume entier a repeindre",
+    p:"En preparant le site, on decouvre que les 31 cartes d'ALTERA ne sont pas de " +
+      "vraies illustrations mais des vignettes decoupees dans des maquettes. " +
+      "Elles sont marquees comme provisoires en attendant leur version peinte." },
+  { d:'27 AOUT 2026', qui:'3D',
+    t:"KAEDAN entre en production",
+    p:"La planche technique du prince heritier est validee : face, profil, dos, " +
+      "bouclier recto-verso et epee separee. Il sera le premier personnage " +
+      "original en 3D jouable." },
+  { d:'25 AOUT 2026', qui:'jeu',
+    t:"Version 0.5.2 — l'interface du hub",
+    p:"L'ecran d'accueil du jeu est repris dans le moteur." },
+  { d:'23 AOUT 2026', qui:'jeu',
+    t:"Version 0.2.0 — le duel",
+    p:"Deux combattants s'affrontent dans l'arene. La camera et les premiers " +
+      "echanges de coups sont en place." },
+  { d:'22 AOUT 2026', qui:'jeu',
+    t:"Le projet demarre dans le moteur",
+    p:"Premiere version du projet Unreal : une arene, un terrain, une camera." },
+];
+
+(function peindreJournal(){
+  const z = document.getElementById('journalListe');
+  if (!z) return;
+  z.innerHTML = JOURNAL.map((e, i) =>
+    '<article class="entree' + (i === 0 ? ' neuf' : '') + '">' +
+      '<div class="quand"><time>' + e.d + '</time>' +
+        '<span class="qui">' + e.qui + '</span></div>' +
+      '<h4>' + e.t + '</h4>' +
+      '<p>' + e.p + '</p>' +
+    '</article>').join('');
+})();
+
+/* ── les captures ──
+   On tente une liste de noms connus. Chaque image qui ne repond pas est
+   simplement absente : le site ne montre jamais un cadre vide. */
+const CAPTURES = [
+  { f:'hub.png',       t:"L'ECRAN D'ACCUEIL" },
+  { f:'arene.png',     t:"L'ARENE DE COMBAT" },
+  { f:'perso.png',     t:'UN PERSONNAGE' },
+  { f:'combat.png',    t:'UN ECHANGE DE COUPS' },
+  { f:'formation.png', t:"L'EQUIPE" },
+  { f:'libre-1.png',   t:'EN DEVELOPPEMENT' },
+  { f:'libre-2.png',   t:'EN DEVELOPPEMENT' },
+  { f:'libre-3.png',   t:'EN DEVELOPPEMENT' },
+];
+
+(function captures(){
+  const zone = document.getElementById('galerie');
+  const rien = document.getElementById('rienEncore');
+  let trouvees = 0, restantes = CAPTURES.length;
+
+  const finir = () => {
+    if (--restantes > 0) return;
+    if (!trouvees) rien.hidden = false;
+  };
+
+  const poser = (c, fichier) => {
+    trouvees++;
+    const d = document.createElement('div');
+    d.className = 'vignette';
+    d.innerHTML = '<img src="captures/' + fichier + '" alt="' + c.t + '" loading="lazy">' +
+                  '<b>' + c.t + '</b>';
+    d.onclick = () => {
+      document.getElementById('loupeImg').src = 'captures/' + fichier;
+      document.getElementById('loupe').classList.add('on');
+    };
+    zone.appendChild(d);
+    finir();
+  };
+
+  for (const c of CAPTURES){
+    const leger = c.f.replace(/[.]png$/, '.webp');
+    const a = new Image();
+    a.onload  = () => poser(c, leger);
+    a.onerror = () => {                       // pas de WebP : on tente le PNG brut
+      const b = new Image();
+      b.onload  = () => poser(c, c.f);
+      b.onerror = finir;
+      b.src = 'captures/' + c.f;
+    };
+    a.src = 'captures/' + leger;
+  }
+})();
+
+document.getElementById('loupe').onclick = e => e.currentTarget.classList.remove('on');
+addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('loupe').classList.remove('on');
+});
+
+/* ── le lien du Discord officiel ──
+   Une seule adresse à changer ici, elle se pose sur tous les boutons.
+   target="_blank" avec rel="noopener" : la page du jeu reste ouverte
+   derrière, et l'onglet Discord ne garde aucune prise sur elle. */
+const DISCORD = 'https://discord.gg/RWpSE6Qnt';
+document.querySelectorAll('[data-lien="discord"]').forEach(a => {
+  a.href = DISCORD;
+  a.target = '_blank';
+  a.rel = 'noopener';
+});
+</script>
+</body>
+</html>

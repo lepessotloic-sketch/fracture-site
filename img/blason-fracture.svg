@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="f-champ" cx="50%" cy="40%" r="75%">
+      <stop offset="0%" stop-color="#241B33"/>
+      <stop offset="100%" stop-color="#08060D"/>
+    </radialGradient>
+    <linearGradient id="f-metal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#F7D882"/>
+      <stop offset="48%" stop-color="#E8B04B"/>
+      <stop offset="100%" stop-color="#8A5C16"/>
+    </linearGradient>
+    <linearGradient id="f-faille" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FFF3D0"/>
+      <stop offset="50%" stop-color="#F3CB63"/>
+      <stop offset="100%" stop-color="#B77CFF"/>
+    </linearGradient>
+    <radialGradient id="f-halo" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#F3CB63" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#F3CB63" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="f-clip"><circle cx="256" cy="256" r="222"/></clipPath>
+  </defs>
+
+  <circle cx="256" cy="256" r="246" fill="url(#f-metal)"/>
+  <circle cx="256" cy="256" r="222" fill="url(#f-champ)"/>
+  <circle cx="256" cy="256" r="222" fill="url(#f-halo)"/>
+
+  <g clip-path="url(#f-clip)">
+    <g opacity="0.5">
+      <path d="M60,300 A196,196 0 0,1 256,104 L256,300 Z" fill="#2E6FD8" opacity="0.55"/>
+      <path d="M256,104 A196,196 0 0,1 452,300 L256,300 Z" fill="#A8291F" opacity="0.55"/>
+      <path d="M60,300 A196,196 0 0,0 452,300 Z" fill="#5B2599" opacity="0.55"/>
+    </g>
+    <path d="M256,40 L214,180 L262,214 L206,262 L268,318 L212,368 L286,432 L246,486"
+      fill="none" stroke="#08060D" stroke-width="34" stroke-linejoin="round" stroke-linecap="round"/>
+    <path d="M256,40 L214,180 L262,214 L206,262 L268,318 L212,368 L286,432 L246,486"
+      fill="none" stroke="url(#f-faille)" stroke-width="17" stroke-linejoin="round" stroke-linecap="round"/>
+    <g stroke="url(#f-faille)" stroke-width="8" stroke-linecap="round" fill="none" opacity="0.8">
+      <path d="M214,180 L134,142"/>
+      <path d="M206,262 L318,222"/>
+      <path d="M212,368 L120,398"/>
+      <path d="M286,432 L370,406"/>
+    </g>
+  </g>
+
+  <circle cx="256" cy="256" r="226" fill="none" stroke="url(#f-metal)" stroke-width="11"/>
+  <circle cx="256" cy="256" r="210" fill="none" stroke="#F3CB63" stroke-width="2.5" opacity="0.45"/>
+</svg>

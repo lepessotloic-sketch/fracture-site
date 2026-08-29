@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="champ-n" cx="50%" cy="38%" r="72%">
+      <stop offset="0%" stop-color="#3C1668"/>
+      <stop offset="100%" stop-color="#0E0719"/>
+    </radialGradient>
+    <linearGradient id="metal-n" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4A2478"/>
+      <stop offset="48%" stop-color="#B77CFF"/>
+      <stop offset="100%" stop-color="#4A2478"/>
+    </linearGradient>
+    <radialGradient id="halo-n" cx="50%" cy="42%" r="50%">
+      <stop offset="0%" stop-color="#9A4BFF" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#9A4BFF" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="disque-n"><circle cx="256" cy="256" r="222"/></clipPath>
+  </defs>
+
+  <circle cx="256" cy="256" r="246" fill="url(#metal-n)"/>
+  <circle cx="256" cy="256" r="230" fill="#0E0719"/>
+  <circle cx="256" cy="256" r="222" fill="url(#champ-n)"/>
+  <circle cx="256" cy="256" r="222" fill="url(#halo-n)"/>
+
+  <g clip-path="url(#disque-n)">
+    
+    <circle cx="256" cy="228" r="134" fill="#B77CFF" opacity="0.5"/>
+    <circle cx="256" cy="228" r="124" fill="#0B0616"/>
+    <g transform="translate(256,250)">
+      <path d="M-56,-52 C-116,-78 -140,-30 -122,18 C-128,-30 -100,-56 -52,-32 Z" fill="#D8D4E8"/>
+      <path d="M56,-52 C116,-78 140,-30 122,18 C128,-30 100,-56 52,-32 Z" fill="#D8D4E8"/>
+      <path d="M0,-64 C50,-64 74,-28 74,10 C74,40 58,58 40,66 L40,96
+               L20,84 L0,100 L-20,84 L-40,96 L-40,66 C-58,58 -74,40 -74,10
+               C-74,-28 -50,-64 0,-64 Z" fill="#E6E2F2"/>
+      <g fill="#0B0616">
+        <path d="M-46,-4 L-12,6 L-20,34 L-48,26 Z"/>
+        <path d="M46,-4 L12,6 L20,34 L48,26 Z"/>
+        <path d="M0,26 L14,58 L-14,58 Z"/>
+      </g>
+      <g fill="#9A4BFF" opacity="0.9">
+        <path d="M-40,2 L-20,8 L-24,24 L-40,18 Z"/>
+        <path d="M40,2 L20,8 L24,24 L40,18 Z"/>
+      </g>
+    </g>
+    <path d="M198,66 L236,196 L214,232 L262,290 L238,336 L286,404 L268,452"
+    fill="none" stroke="#D8D4E8" stroke-width="7" stroke-linejoin="round"
+    stroke-linecap="round" opacity="0.5"/>
+  <path d="M236,196 L286,168 M262,290 L318,268 M286,404 L336,382"
+    fill="none" stroke="#D8D4E8" stroke-width="4.5" stroke-linecap="round"
+    opacity="0.35"/>
+  </g>
+
+  <circle cx="256" cy="256" r="226" fill="none" stroke="url(#metal-n)" stroke-width="9"/>
+  <circle cx="256" cy="256" r="212" fill="none" stroke="#D8D4E8" stroke-width="2.5" opacity="0.4"/>
+</svg>

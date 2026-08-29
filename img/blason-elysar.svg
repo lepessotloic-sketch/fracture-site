@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <radialGradient id="champ-e" cx="50%" cy="38%" r="72%">
+      <stop offset="0%" stop-color="#2E6FD8"/>
+      <stop offset="100%" stop-color="#0A2452"/>
+    </radialGradient>
+    <linearGradient id="metal-e" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#9A7420"/>
+      <stop offset="48%" stop-color="#F3CB63"/>
+      <stop offset="100%" stop-color="#9A7420"/>
+    </linearGradient>
+    <radialGradient id="halo-e" cx="50%" cy="42%" r="50%">
+      <stop offset="0%" stop-color="#8FC4FF" stop-opacity="0.55"/>
+      <stop offset="100%" stop-color="#8FC4FF" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="disque-e"><circle cx="256" cy="256" r="222"/></clipPath>
+  </defs>
+
+  <circle cx="256" cy="256" r="246" fill="url(#metal-e)"/>
+  <circle cx="256" cy="256" r="230" fill="#0A2452"/>
+  <circle cx="256" cy="256" r="222" fill="url(#champ-e)"/>
+  <circle cx="256" cy="256" r="222" fill="url(#halo-e)"/>
+
+  <g clip-path="url(#disque-e)">
+    
+    <g fill="#F3CB63" transform="translate(256,292)">
+      <g transform="scale(1,1)"><path d="M0,-15 L121.36,-6.3 L148,0 L121.36,6.3 L0,15 Z" transform="rotate(-6)"/><path d="M0,-14 L114.8,-5.88 L140,0 L114.8,5.88 L0,14 Z" transform="rotate(-21)"/><path d="M0,-13 L103.32,-5.46 L126,0 L103.32,5.46 L0,13 Z" transform="rotate(-36)"/><path d="M0,-11 L88.55999999999999,-4.62 L108,0 L88.55999999999999,4.62 L0,11 Z" transform="rotate(-51)"/><path d="M0,-9 L70.52,-3.78 L86,0 L70.52,3.78 L0,9 Z" transform="rotate(-66)"/></g><g transform="scale(-1,1)"><path d="M0,-15 L121.36,-6.3 L148,0 L121.36,6.3 L0,15 Z" transform="rotate(-6)"/><path d="M0,-14 L114.8,-5.88 L140,0 L114.8,5.88 L0,14 Z" transform="rotate(-21)"/><path d="M0,-13 L103.32,-5.46 L126,0 L103.32,5.46 L0,13 Z" transform="rotate(-36)"/><path d="M0,-11 L88.55999999999999,-4.62 L108,0 L88.55999999999999,4.62 L0,11 Z" transform="rotate(-51)"/><path d="M0,-9 L70.52,-3.78 L86,0 L70.52,3.78 L0,9 Z" transform="rotate(-66)"/></g>
+    </g>
+    <g fill="#EAF3FF">
+      <path d="M256,118 L286,232 L256,272 L226,232 Z"/>
+      <path d="M256,150 L272,232 L256,256 L240,232 Z" fill="#8FC4FF" opacity="0.85"/>
+    </g>
+    <g fill="#F3CB63">
+      <path d="M256,86 L266,112 L292,122 L266,132 L256,158 L246,132 L220,122 L246,112 Z"/>
+    </g>
+    <g fill="#EAF3FF" opacity="0.9">
+      <circle cx="256" cy="352" r="13"/>
+      <path d="M256,368 L288,432 L256,414 L224,432 Z"/>
+    </g>
+    <path d="M198,66 L236,196 L214,232 L262,290 L238,336 L286,404 L268,452"
+    fill="none" stroke="#EAF3FF" stroke-width="7" stroke-linejoin="round"
+    stroke-linecap="round" opacity="0.5"/>
+  <path d="M236,196 L286,168 M262,290 L318,268 M286,404 L336,382"
+    fill="none" stroke="#EAF3FF" stroke-width="4.5" stroke-linecap="round"
+    opacity="0.35"/>
+  </g>
+
+  <circle cx="256" cy="256" r="226" fill="none" stroke="url(#metal-e)" stroke-width="9"/>
+  <circle cx="256" cy="256" r="212" fill="none" stroke="#EAF3FF" stroke-width="2.5" opacity="0.4"/>
+</svg>

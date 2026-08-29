@@ -1,0 +1,18 @@
+CAPTURES DU JEU — a deposer ici par Codex
+
+Format attendu : PNG ou JPG, 1920 x 1080, sans HUD de debug.
+
+Noms reconnus par le site (deposer sous ces noms exacts) :
+
+  hub.png       l'ecran d'accueil du jeu
+  arene.png     l'arene de combat
+  perso.png     un personnage en gros plan
+  combat.png    un echange de coups
+  formation.png l'ecran d'equipe
+  libre-1.png   ce que tu juges presentable
+  libre-2.png
+  libre-3.png
+
+Le site affiche uniquement les fichiers presents. Tant qu'il n'y en a
+aucun, la section annonce honnetement qu'aucune capture n'est disponible.
+Aucune image inventee, aucun visuel de remplacement.
