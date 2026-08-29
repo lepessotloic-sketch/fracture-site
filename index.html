@@ -153,46 +153,40 @@ nav a:hover::after{right:0}
 @keyframes battre{0%,100%{opacity:.55;transform:translateX(-50%) scaleX(1)}
                   50%    {opacity:1;transform:translateX(-50%) scaleX(2.6)}}
 
-/* ── l'ouverture : la cassure se rejoue ──
-   Tout est porte par la classe .briser, posee sur la section au chargement
-   et retiree a la fin. Sans elle, la page est dans son etat normal : c'est
-   ce qui garantit qu'un echec du script ne casse rien. */
+/* ── LA BRISURE : le voile d'ouverture ──
+   Il est cree par le script, jamais present dans le document. */
+.brisure{position:fixed;inset:0;z-index:150;background:var(--nuit);
+  overflow:hidden;pointer-events:none}
+/* l'en-tete arrive avec le reste, pas avant : le petit logo du coin
+   trahirait le nom qu'on veut faire decouvrir. */
+header.attendre{opacity:0}
+header{transition:opacity .6s var(--lent)}
+.brisure.partir{opacity:0;transition:opacity .5s ease-out}
+/* chaque eclat est un calque plein ecran, decoupe a sa forme. Ils portent
+   tous la meme image au meme endroit : c'est la decoupe qui differe, donc
+   l'image parait intacte tant que rien ne bouge. */
+.eclat{position:absolute;inset:0;
+  background:var(--portrait) center/contain no-repeat;
+  transform-origin:var(--ox) var(--oy);
+  will-change:transform,opacity}
+.brisure.feler .eclat{transform:scale(.988) translate(var(--jx),var(--jy));
+  transition:transform .18s ease-out}
+.brisure.voler .eclat{opacity:0;
+  transform:translate(var(--dx),var(--dy)) rotate(var(--rot)) scale(var(--ech));
+  transition:transform 1.05s cubic-bezier(.2,.55,.3,1),
+             opacity .95s ease-in var(--retard)}
+/* l'eclair de l'impact */
+.choc{position:absolute;left:50%;top:38%;width:2px;height:2px;z-index:5;
+  border-radius:50%;transform:translate(-50%,-50%);opacity:0;
+  box-shadow:0 0 60px 30px #fff,0 0 160px 90px rgba(255,240,200,.75),
+             0 0 320px 200px rgba(201,162,39,.35)}
+.brisure.feler .choc{animation:eclater .75s ease-out forwards}
+@keyframes eclater{0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}
+                   12%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+                   100%{opacity:0;transform:translate(-50%,-50%) scale(2.4)}}
 
-/* les panneaux, colles et eteints */
-.ouverture.briser .pan{transform:translateX(var(--pousse,0));
-  transition:transform 1.15s cubic-bezier(.16,1,.3,1)}
-.ouverture.briser .pan:nth-child(1){--pousse:2.2%}
-.ouverture.briser .pan:nth-child(3){--pousse:-2.2%}
-.ouverture.briser .pan i{filter:brightness(.06) saturate(.15) contrast(1.2);
-  transform:scale(1.14)}
-.ouverture .pan{transform:translateX(0);
-  transition:transform 1.15s cubic-bezier(.16,1,.3,1)}
-
-/* les fissures, fermees puis ouvertes d'un trait */
-.ouverture.briser .cassure{animation:none;opacity:0;
-  transform:translateX(-50%) scaleY(0);transform-origin:top center}
-.cassure{transform-origin:top center}
-
-/* l'eclair qui descend le long de la cassure */
-.eclair{position:absolute;top:-6%;bottom:-6%;width:3px;z-index:4;
-  pointer-events:none;opacity:0;transform:translateX(-50%);
-  background:linear-gradient(180deg,transparent,#fff 45%,#fff 55%,transparent);
-  filter:blur(1px) drop-shadow(0 0 14px #fff) drop-shadow(0 0 40px var(--c1))}
-.ouverture.briser .eclair{animation:fendre .62s cubic-bezier(.4,0,.2,1) forwards}
-@keyframes fendre{
-  0%  {opacity:0;   transform:translateX(-50%) scaleY(0);   transform-origin:top center}
-  22% {opacity:1;   transform:translateX(-50%) scaleY(1);   transform-origin:top center}
-  60% {opacity:.95; transform:translateX(-50%) scaleY(1) scaleX(3.2)}
-  100%{opacity:0;   transform:translateX(-50%) scaleY(1) scaleX(1)}
-}
-
-/* on n'impose ce mouvement a personne : certains le supportent mal */
-@media (prefers-reduced-motion: reduce){
-  .ouverture.briser .pan,
-  .ouverture.briser .pan i,
-  .ouverture.briser .cassure{transform:none;filter:none;opacity:1;animation:none}
-  .eclair{display:none}
-}
+/* le contenu du heros attend son tour */
+.ouverture .dedans.differe{opacity:0}
 
 /* le nom du royaume, au pied de son panneau */
 .pan .sceau-roy{position:absolute;left:0;right:0;bottom:clamp(52px,9vh,86px);z-index:2;
@@ -567,7 +561,7 @@ footer{border-top:1px solid var(--ligne);background:var(--nuit);
 </header>
 
 <!-- ═══════════════════════ OUVERTURE ═══════════════════════ -->
-<section class="ouverture briser" id="haut">
+<section class="ouverture" id="haut">
   <div class="fond">
     <div class="pan" style="--c:var(--altera);--fond:url(img/decor-altera.webp);--pos:64% 52%;--lum:.46">
       <i></i>
@@ -590,8 +584,6 @@ footer{border-top:1px solid var(--ligne);background:var(--nuit);
     </div>
     <i class="cassure" style="left:33.333%;--c1:var(--altera);--c2:var(--elysar)"></i>
     <i class="cassure" style="left:66.666%;--c1:var(--elysar);--c2:var(--noxaris);animation-delay:-2.5s"></i>
-    <i class="eclair" style="left:33.333%;--c1:var(--altera)" aria-hidden="true"></i>
-    <i class="eclair" style="left:66.666%;--c1:var(--noxaris);animation-delay:.12s" aria-hidden="true"></i>
   </div>
 
   <div class="dedans">
@@ -1098,26 +1090,136 @@ nav.querySelectorAll('a').forEach(a => a.onclick = () => {
   burger.classList.remove('ouvert'); nav.classList.remove('ouvert');
 });
 
-/* ── la cassure, puis les lignes qui montent ──
-   On retire « briser » apres l'eclair : les panneaux s'ecartent, la lumiere
-   revient, et les fissures reprennent leur battement normal.
-   Le retrait est aussi programme en secours : si l'evenement d'animation ne
-   part pas, un delai s'en charge. Personne ne doit rester devant un ecran
-   noir parce qu'un navigateur n'a pas joue le jeu. */
-(function briser(){
-  const o = document.querySelector('.ouverture');
-  if (!o) return;
+/* ── LA BRISURE ──
+   ALDEON tient l'ecran, puis il se brise et decouvre les trois royaumes.
+
+   Les eclats sont calcules en coordonnees polaires autour du point d'impact :
+   des rayons qui partent du choc, des anneaux de plus en plus larges. C'est
+   ainsi que se brise une vitre, et ca evite le quadrillage regulier qui
+   trahit tout de suite l'effet. */
+(function brisure(){
+  const ouverture = document.querySelector('.ouverture');
+  const dedans = ouverture && ouverture.querySelector('.dedans');
+  if (!ouverture || !dedans) return;
+
   const doux = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const ouvrir = () => o.classList.remove('briser');
-  if (doux) { ouvrir(); return; }
-  const eclair = o.querySelector('.eclair');
-  if (eclair) eclair.addEventListener('animationend', ouvrir, { once: true });
-  setTimeout(ouvrir, 900);          // secours
+  if (doux) return;                       // aucune animation, page normale
+
+  const PORTRAIT = 'url(img/portrait-aldeon.webp)';
+  const IX = 50, IY = 38;                 // le point d'impact, en % de l'ecran
+
+  /* on ne cache le contenu que si on est certain de pouvoir l'animer */
+  dedans.classList.add('differe');
+  const entete = document.getElementById('tete');
+  if (entete) entete.classList.add('attendre');
+
+  const voile = document.createElement('div');
+  voile.className = 'brisure';
+  voile.setAttribute('aria-hidden', 'true');
+  voile.style.setProperty('--portrait', PORTRAIT);
+
+  const RAYONS = 9, ANNEAUX = 4;
+  const hasard = (a, b) => a + Math.random() * (b - a);
+  /* les rayons ne sont pas regulierement espaces : une vitre ne se brise
+     jamais en parts de gateau egales */
+  const angles = [];
+  for (let k = 0; k < RAYONS; k++){
+    angles.push(k * 360 / RAYONS + hasard(-14, 14));
+  }
+  angles.push(angles[0] + 360);
+  const rayons = [0, 14, 30, 52, 150];    // en % de l'ecran
+
+  /* La grille est calculee une seule fois : grille[anneau][rayon] est un
+     sommet, partage par les quatre eclats qui s'y touchent. Sans ce partage,
+     chacun tirait son propre hasard et il restait des fentes entre eux. */
+  const grille = [];
+  for (let a = 0; a <= ANNEAUX; a++){
+    grille[a] = [];
+    for (let k = 0; k <= RAYONS; k++){
+      const base = rayons[a];
+      grille[a][k] = a === 0 ? 0
+                   : a === ANNEAUX ? base            // le dernier anneau deborde, pas de jeu
+                   : base * hasard(.9, 1.1);
+    }
+    grille[a][RAYONS] = grille[a][0];                // le tour se referme
+  }
+
+  const point = (ang, ray) => {
+    const r = ang * Math.PI / 180;
+    return [(IX + Math.cos(r) * ray * 1.1).toFixed(2),
+            (IY + Math.sin(r) * ray).toFixed(2)];
+  };
+
+  for (let a = 0; a < ANNEAUX; a++){
+    for (let k = 0; k < RAYONS; k++){
+      const a0 = angles[k], a1 = angles[k + 1];
+      const p = [point(a0, grille[a][k]),     point(a1, grille[a][k + 1]),
+                 point(a1, grille[a + 1][k + 1]), point(a0, grille[a + 1][k])];
+      const eclat = document.createElement('i');
+      eclat.className = 'eclat';
+      eclat.style.clipPath = 'polygon(' + p.map(q => q[0] + '% ' + q[1] + '%').join(',') + ')';
+      /* le centre de l'eclat sert de pivot, sinon tout tourne autour du coin */
+      const cx = (+p[0][0] + +p[2][0]) / 2, cy = (+p[0][1] + +p[2][1]) / 2;
+      eclat.style.setProperty('--ox', cx + '%');
+      eclat.style.setProperty('--oy', cy + '%');
+      /* il part en s'ecartant du choc, d'autant plus loin qu'il en est loin */
+      const dir = (a0 + a1) / 2 * Math.PI / 180;
+      const force = 22 + a * 26 + hasard(0, 30);
+      eclat.style.setProperty('--dx', (Math.cos(dir) * force).toFixed(1) + 'vw');
+      eclat.style.setProperty('--dy', (Math.sin(dir) * force).toFixed(1) + 'vh');
+      eclat.style.setProperty('--rot', hasard(-38, 38).toFixed(1) + 'deg');
+      eclat.style.setProperty('--ech', hasard(.82, 1.06).toFixed(2));
+      eclat.style.setProperty('--jx', hasard(-.35, .35).toFixed(2) + '%');
+      eclat.style.setProperty('--jy', hasard(-.35, .35).toFixed(2) + '%');
+      eclat.style.setProperty('--retard', (a * 40 + hasard(0, 90)).toFixed(0) + 'ms');
+      voile.appendChild(eclat);
+    }
+  }
+  const choc = document.createElement('i');
+  choc.className = 'choc';
+  voile.appendChild(choc);
+
+  const decouvrir = () => {
+    if (voile.parentNode) {
+      voile.classList.add('partir');
+      setTimeout(() => voile.remove(), 520);
+    }
+    dedans.classList.remove('differe');
+    if (entete) entete.classList.remove('attendre');
+    ouverture.classList.add('ouverte');
+    document.querySelectorAll('[data-monter]').forEach(e => {
+      const i = +e.dataset.monter;
+      e.animate(
+        [{ opacity: 0, transform: 'translateY(22px)' }, { opacity: 1, transform: 'none' }],
+        { duration: 1000, delay: 160 + i * 190, easing: 'cubic-bezier(.16,1,.3,1)', fill: 'forwards' });
+    });
+  };
+
+  let parti = false;
+  const jouer = () => {
+    if (parti) return; parti = true;
+    document.body.appendChild(voile);
+    setTimeout(() => voile.classList.add('feler'), 900);   // le calme, puis la felure
+    setTimeout(() => voile.classList.add('voler'), 1180);  // les eclats partent
+    setTimeout(decouvrir, 2050);
+  };
+
+  /* on n'ouvre que quand le portrait est vraiment peint : sinon le noir
+     passerait pour un chargement au lieu d'un silence voulu. */
+  const im = new Image();
+  im.onload = jouer;
+  im.onerror = decouvrir;            // pas de portrait : pas de brisure
+  im.src = 'img/portrait-aldeon.webp';
+  setTimeout(() => { if (!parti) decouvrir(); }, 4000);   // secours absolu
 })();
 
 /* ── l'ouverture : les lignes montent l'une après l'autre ── */
 addEventListener('load', () => {
-  document.querySelector('.ouverture').classList.add('ouverte');
+  /* filet : si la brisure n'a pas pris la main (mouvement reduit, portrait
+     absent, script partiel), le heros s'ouvre comme avant. */
+  const o = document.querySelector('.ouverture');
+  if (o.classList.contains('ouverte')) return;
+  o.classList.add('ouverte');
   document.querySelectorAll('[data-monter]').forEach(e => {
     const i = +e.dataset.monter;
     e.animate(
