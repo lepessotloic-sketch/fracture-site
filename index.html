@@ -479,13 +479,15 @@ section{position:relative}
 /* la ligne d energie et de role : une pastille de couleur, l energie a
    laquelle le heros repond, puis son role. Les deux tiennent sur un seul
    rang pour ne pas allonger le cartouche. */
+/* la ligne du role : l ecu peint et le mot, exactement comme sur les cartes
+   illustrees. L ecu n est pas dessine ici — il est decoupe des cartes de
+   Valgard, Solherion, Rheane, Lysandor et Yselune par
+   .claude/fracture-blasons-cartes.js. */
 .heros.cadre .plaque .ligne{display:flex;align-items:center;justify-content:center;
-  gap:.42em;margin-top:4px;font-style:normal;font-size:clamp(7px,4.7cqw,11.5px);
+  gap:.4em;margin-top:5px;font-style:normal;font-size:clamp(7.5px,5cqw,12.5px);
   letter-spacing:.11em;text-transform:uppercase;white-space:nowrap}
-.heros.cadre .plaque .pastille{width:.52em;height:.52em;border-radius:50%;
-  background:currentColor;flex:none;box-shadow:0 0 6px currentColor}
-.heros.cadre .plaque .feu{font-style:normal;color:#e8d9b4;text-shadow:0 1px 4px #000}
-.heros.cadre .plaque .sep{font-style:normal;color:var(--encre-3)}
+.heros.cadre .plaque .blason{width:1.7em;height:1.7em;object-fit:contain;flex:none;
+  filter:drop-shadow(0 1px 3px rgba(0,0,0,.9))}
 .heros.cadre .plaque .role{display:inline;font-style:normal;font-size:inherit;
   letter-spacing:inherit;text-transform:uppercase;color:#e2d6b8;margin-top:0;
   text-shadow:0 1px 4px #000}
@@ -496,16 +498,20 @@ section{position:relative}
   letter-spacing:.1em;color:var(--c);margin-top:3px;
   text-shadow:0 0 9px color-mix(in srgb, var(--c) 65%, transparent),0 1px 3px #000;
   white-space:nowrap}
-/* la bete d esprit ferme le cartouche. C est la ligne la plus discrete :
-   elle informe sans voler la vedette au nom. Les soldats n en ont pas et
-   la ligne n est alors pas ecrite du tout — jamais de champ vide. */
-.heros.cadre .plaque .bete{display:block;font-style:normal;
-  font-size:clamp(7px,4.4cqw,11px);letter-spacing:.15em;text-transform:uppercase;
-  color:var(--encre-2);margin-top:4px;text-shadow:0 1px 4px #000;
-  /* certaines betes portent un nom long — « Chauve-souris abyssale a quatre
-     ailes ». On la laisse passer a la ligne plutot que de la couper : un nom
-     tronque ne renseigne sur rien. */
-  line-height:1.45;text-wrap:balance}
+/* la derniere ligne, la plus discrete : l energie a laquelle le heros repond,
+   puis sa bete d esprit. Les soldats n ont pas de bete — le point de
+   separation et le nom ne sont alors pas ecrits du tout. */
+.heros.cadre .plaque .bas{display:block;font-style:normal;
+  font-size:clamp(7px,4.4cqw,11px);letter-spacing:.14em;text-transform:uppercase;
+  margin-top:5px;line-height:1.5;text-wrap:balance}
+.heros.cadre .plaque .pastille{display:inline-block;width:.52em;height:.52em;
+  border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor;
+  vertical-align:.08em;margin-right:.42em}
+.heros.cadre .plaque .feu{font-style:normal;color:#e8d9b4;text-shadow:0 1px 4px #000}
+.heros.cadre .plaque .sep{font-style:normal;color:var(--encre-3);margin:0 .3em}
+/* le nom de la bete reste en retrait : il informe sans voler la vedette */
+.heros.cadre .plaque .bete{font-style:normal;color:var(--encre-2);
+  text-shadow:0 1px 4px #000}
 /* le liseré du bas rappelle le royaume */
 .heros.cadre::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;
   background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.55}
@@ -1390,6 +1396,13 @@ function peindreMur(){
                          eclipse:'var(--noxaris)', neutre:'var(--encre-3)' };
       const energie = ENERGIES[h.energie] || 'NEUTRE';
       const teinte  = TEINTES[h.energie]  || 'var(--encre-3)';
+      /* L ECU DU ROLE. Il n est pas dessine ici : c est celui qui est peint
+         sur les cartes illustrees, decoupe par
+         .claude/fracture-blasons-cartes.js. Les cartes detourees portent
+         donc exactement le meme que les autres. */
+      const ECUS = { Gardien:'gardien', Briseur:'briseur', Traqueur:'traqueur',
+                     Soutien:'soutien', Soigneur:'soigneur' };
+      const blason = ECUS[h.role] || '';
       const bete = (h.animal || '').trim()
                     .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
   
@@ -1399,14 +1412,17 @@ function peindreMur(){
                '</span>' +
                '<figcaption class="plaque">' +
                  '<b class="nom">' + sansAccent + '</b>' +
-                 '<i class="ligne" style="color:' + teinte + '">' +
-                   '<i class="pastille"></i>' +
-                   '<i class="feu">' + energie + '</i>' +
-                   '<i class="sep">·</i>' +
+                 '<i class="ligne">' +
+                   (blason ? '<img class="blason" src="img/roles/' + blason +
+                             '.png" alt="" loading="lazy">' : '') +
                    '<i class="role">' + h.role + '</i>' +
                  '</i>' +
                  '<i class="etoiles">' + etoiles + '</i>' +
-                 (bete ? '<i class="bete">' + bete + '</i>' : '') +
+                 '<i class="bas" style="color:' + teinte + '">' +
+                   '<i class="pastille"></i>' +
+                   '<i class="feu">' + energie + '</i>' +
+                   (bete ? '<i class="sep">·</i><i class="bete">' + bete + '</i>' : '') +
+                 '</i>' +
                '</figcaption>' +
              '</figure>';
     }
