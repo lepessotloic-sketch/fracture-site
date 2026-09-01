@@ -476,8 +476,18 @@ section{position:relative}
 .heros.cadre .plaque .nom{display:block;font-family:var(--titre);
   font-size:clamp(11px,9.2cqw,22px);letter-spacing:.05em;color:#f2e7cc;
   text-shadow:0 1px 6px #000,0 0 18px rgba(0,0,0,.9);line-height:1.2}
-.heros.cadre .plaque .role{display:block;font-style:normal;font-size:clamp(8px,5.4cqw,13px);
-  letter-spacing:.12em;text-transform:uppercase;color:#e2d6b8;margin-top:3px;
+/* la ligne d energie et de role : une pastille de couleur, l energie a
+   laquelle le heros repond, puis son role. Les deux tiennent sur un seul
+   rang pour ne pas allonger le cartouche. */
+.heros.cadre .plaque .ligne{display:flex;align-items:center;justify-content:center;
+  gap:.42em;margin-top:4px;font-style:normal;font-size:clamp(7px,4.7cqw,11.5px);
+  letter-spacing:.11em;text-transform:uppercase;white-space:nowrap}
+.heros.cadre .plaque .pastille{width:.52em;height:.52em;border-radius:50%;
+  background:currentColor;flex:none;box-shadow:0 0 6px currentColor}
+.heros.cadre .plaque .feu{font-style:normal;color:#e8d9b4;text-shadow:0 1px 4px #000}
+.heros.cadre .plaque .sep{font-style:normal;color:var(--encre-3)}
+.heros.cadre .plaque .role{display:inline;font-style:normal;font-size:inherit;
+  letter-spacing:inherit;text-transform:uppercase;color:#e2d6b8;margin-top:0;
   text-shadow:0 1px 4px #000}
 .heros.cadre .plaque .etoiles{display:block;font-style:normal;font-size:clamp(8px,5.8cqw,14px);
   /* les etoiles portent la couleur du royaume : ALTERA rouge, les EXILES
@@ -486,6 +496,16 @@ section{position:relative}
   letter-spacing:.1em;color:var(--c);margin-top:3px;
   text-shadow:0 0 9px color-mix(in srgb, var(--c) 65%, transparent),0 1px 3px #000;
   white-space:nowrap}
+/* la bete d esprit ferme le cartouche. C est la ligne la plus discrete :
+   elle informe sans voler la vedette au nom. Les soldats n en ont pas et
+   la ligne n est alors pas ecrite du tout — jamais de champ vide. */
+.heros.cadre .plaque .bete{display:block;font-style:normal;
+  font-size:clamp(7px,4.4cqw,11px);letter-spacing:.15em;text-transform:uppercase;
+  color:var(--encre-2);margin-top:4px;text-shadow:0 1px 4px #000;
+  /* certaines betes portent un nom long — « Chauve-souris abyssale a quatre
+     ailes ». On la laisse passer a la ligne plutot que de la couper : un nom
+     tronque ne renseigne sur rien. */
+  line-height:1.45;text-wrap:balance}
 /* le liseré du bas rappelle le royaume */
 .heros.cadre::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;
   background:linear-gradient(90deg,transparent,var(--c),transparent);opacity:.55}
@@ -1354,6 +1374,24 @@ function peindreMur(){
          plutot que dans les donnees : le nom accentue reste correct partout
          ailleurs, et notamment pour un lecteur d ecran. */
       const sansAccent = h.nom.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase();
+
+      /* Deux informations de jeu de plus sur le cartouche.
+
+         L ENERGIE dit a quoi le heros repond : braise pour ALTERA, lumiere
+         pour ELYSAR, eclipse pour NOXARIS, neutre pour ceux qui n en portent
+         aucune. C est la pastille de couleur en tete de ligne.
+
+         LA BETE est son esprit animal, celui qui est peint derriere lui sur
+         la carte. Les soldats — aspirants, mercenaires, shinobis — n en ont
+         pas : la ligne n est alors pas ecrite, plutot que de laisser un
+         cartouche a moitie vide. */
+      const ENERGIES = { braise:'BRAISE', lumiere:'LUMIERE', eclipse:'ECLIPSE', neutre:'NEUTRE' };
+      const TEINTES  = { braise:'var(--altera)', lumiere:'var(--elysar)',
+                         eclipse:'var(--noxaris)', neutre:'var(--encre-3)' };
+      const energie = ENERGIES[h.energie] || 'NEUTRE';
+      const teinte  = TEINTES[h.energie]  || 'var(--encre-3)';
+      const bete = (h.animal || '').trim()
+                    .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase();
   
       return '<figure class="heros cadre" style="--c:' + c + '">' +
                '<span class="figure">' +
@@ -1361,8 +1399,14 @@ function peindreMur(){
                '</span>' +
                '<figcaption class="plaque">' +
                  '<b class="nom">' + sansAccent + '</b>' +
-                 '<i class="role">' + h.role + '</i>' +
+                 '<i class="ligne" style="color:' + teinte + '">' +
+                   '<i class="pastille"></i>' +
+                   '<i class="feu">' + energie + '</i>' +
+                   '<i class="sep">·</i>' +
+                   '<i class="role">' + h.role + '</i>' +
+                 '</i>' +
                  '<i class="etoiles">' + etoiles + '</i>' +
+                 (bete ? '<i class="bete">' + bete + '</i>' : '') +
                '</figcaption>' +
              '</figure>';
     }
